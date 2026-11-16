@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0754A3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Offshore">
+<title>Offshore Schedule</title>
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+/* =====================================================================
+   CONFIGURATION — paste your Supabase project URL and anon (public) key.
+   Leave both empty to run in Preview mode (data stays in this browser).
+   ===================================================================== */
+window.APP_CONFIG = {
+  SUPABASE_URL: "",
+  SUPABASE_ANON_KEY: ""
+};
+</script>
+<style>
+:root{
+  --on-bg:#0866C6; --on-fg:#FFFFFF; --on-bd:#0866C6; --off-bg:#CDEEFF; --off-fg:#102A56; --off-bd:#CDEEFF; --rest-bg:#F5A524; --rest-fg:#102A56; --rest-bd:#F5A524;
+  --bg:#FFFFFF; --ice:#F0F8FF; --card:#FFFFFF;
+  --offshore:#0866C6; --offdays:#CDEEFF; --primary:#005BBB; --sidebar:#0754A3;
+  --text:#102A56; --muted:#5A6F90; --border:#DCEAF5;
+  --holiday:#C8323F; --holiday-bg:#FDEEEF; --ot:#0E7C66; --ot-bg:#E3F6F1;
+  --danger:#C62839;
+  --r-lg:20px; --r-md:16px; --r-sm:12px;
+  --shadow:0 8px 28px rgba(16,42,86,.07),0 1px 3px rgba(16,42,86,.05);
+  --sidebar-w:240px; --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:Inter,-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;font-size:15px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+button{touch-action:manipulation}
+:focus-visible{outline:3px solid #7DB8F0;outline-offset:2px}
+.icon{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.muted{color:var(--muted)}
+.hidden{display:none!important}
+
+/* ---------- Shell ---------- */
+.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar-w);background:linear-gradient(180deg,#0754A3 0%,#0866C6 62%,#4A9BE3 100%);color:#fff;display:flex;flex-direction:column;padding:30px 16px 20px;z-index:20}
+.brand{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;margin-bottom:30px}
+.brand .icon{width:50px;height:50px;stroke-width:1.7}
+.brand-name{font-weight:800;font-size:21px;line-height:1.15;letter-spacing:-.01em}
+.nav{display:flex;flex-direction:column;gap:6px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:16px;border:0;background:transparent;color:#fff;cursor:pointer;font-weight:500;font-size:15px;text-align:left;transition:background .2s var(--ease),color .2s,box-shadow .2s}
+.nav-item:hover{background:rgba(255,255,255,.12)}
+.nav-item.active{background:#E8F4FF;color:var(--primary);font-weight:600;box-shadow:0 6px 16px rgba(0,0,0,.1)}
+.sidebar-foot{margin-top:auto}
+.profile-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border-radius:16px;border:0;background:rgba(255,255,255,.16);color:#fff;cursor:pointer;text-align:left;transition:background .2s}
+.profile-btn:hover{background:rgba(255,255,255,.24)}
+.profile-btn .pname{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.avatar{width:34px;height:34px;border-radius:50%;background:#fff;color:var(--primary);display:grid;place-items:center;font-weight:700;font-size:14px;flex:none}
+.main{margin-left:var(--sidebar-w);padding:32px 36px 56px;min-width:0;min-height:100vh;background:linear-gradient(180deg,#FFFFFF 0,#FFFFFF 260px,var(--ice) 100%)}
+.bottomnav{display:none}
+.banner{display:flex;gap:10px;align-items:flex-start;background:var(--ice);border:1px solid var(--border);border-radius:14px;padding:10px 14px;font-size:13px;margin-bottom:18px;color:#24467d}
+.banner .icon{width:18px;height:18px;margin-top:1px;color:var(--primary)}
+
+/* ---------- Headers & cards ---------- */
+.page-head h1{font-size:40px;font-weight:800;letter-spacing:-.025em;margin:0;line-height:1.1}
+.page-head p{margin:6px 0 0;font-size:18px;font-weight:500;color:#1F3F72}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.card-title{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700;margin:0 0 14px;letter-spacing:-.01em}
+.card-title .icon{color:var(--primary)}
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:24px 0}
+.stat{display:flex;align-items:center;gap:14px;padding:18px}
+.stat-ico{width:56px;height:56px;border-radius:50%;background:var(--ice);color:var(--primary);display:grid;place-items:center;flex:none}
+.stat-ico .icon{width:26px;height:26px}
+.stat-label{font-size:13px;color:var(--muted);font-weight:500}
+.stat-value{font-size:22px;font-weight:700;letter-spacing:-.01em;margin-top:1px;line-height:1.2}
+.stat-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.badge{display:inline-flex;align-items:center;padding:5px 16px;border-radius:999px;font-weight:700;font-size:16px;margin-top:4px}
+.badge.offshore{background:var(--on-bg);color:var(--on-fg);box-shadow:inset 0 0 0 1.5px var(--on-bd)}
+.badge.offdays{background:var(--off-bg);color:var(--off-fg);box-shadow:inset 0 0 0 1.5px var(--off-bd)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;align-items:start}
+.col-main,.col-side{display:flex;flex-direction:column;gap:20px;min-width:0}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:10px 16px;font-weight:600;font-size:14px;cursor:pointer;transition:transform .15s,background .2s,box-shadow .2s,opacity .2s;min-height:42px;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn[disabled]{opacity:.55;cursor:default}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(0,91,187,.25)}
+.btn-primary:hover{background:#004EA3}
+.btn-ghost{background:var(--ice);color:var(--primary);border:1px solid var(--border)}
+.btn-ghost:hover{background:#E4F1FD}
+.btn-danger{background:#FDECEE;color:var(--danger);border:1px solid #F6CDD3}
+.btn-danger.solid{background:var(--danger);color:#fff;border-color:var(--danger)}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--text);transition:background .2s,transform .15s;flex:none}
+.icon-btn:hover{background:var(--ice)}
+.icon-btn:active{transform:scale(.94)}
+.icon-btn.sm{width:34px;height:34px}
+.icon-btn.sm .icon{width:17px;height:17px}
+.link-btn{border:0;background:none;color:var(--primary);font-weight:600;cursor:pointer;padding:0}
+
+/* ---------- Calendar ---------- */
+.cal-card{padding:18px}
+.cal-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.seg{display:inline-flex;background:var(--ice);border:1px solid var(--border);border-radius:14px;padding:3px;gap:2px}
+.seg button{display:flex;align-items:center;justify-content:center;gap:7px;border:0;background:transparent;padding:8px 16px;border-radius:11px;cursor:pointer;font-weight:600;font-size:14px;color:var(--text);transition:background .2s var(--ease),color .2s,box-shadow .2s}
+.seg button .icon{width:18px;height:18px}
+.seg button.active{background:var(--primary);color:#fff;box-shadow:0 3px 10px rgba(0,91,187,.25)}
+.seg-full{display:flex}.seg-full button{flex:1}
+.navgroup{display:flex;align-items:center;gap:6px}
+.cal-label{min-width:168px;text-align:center;font-weight:700;font-size:16px;padding:8px 12px;background:var(--ice);border-radius:12px;white-space:nowrap}
+.toolbar-right{display:flex;gap:8px;margin-left:auto}
+.grid7{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.dow{background:#fff;border-bottom:1px solid var(--border);margin-bottom:6px}
+.dow div{text-align:center;font-weight:700;font-size:14px;padding:10px 0}
+.dow div.we{color:#3B5E95}
+.day{position:relative;min-height:96px;border:1px solid var(--border);border-radius:12px;background:#fff;padding:7px;cursor:pointer;display:flex;flex-direction:column;gap:4px;text-align:left;transition:border-color .15s,box-shadow .15s,background .15s;min-width:0;overflow:hidden}
+.day:hover{border-color:#B4D4EF}
+.day .num{font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:space-between;gap:4px;line-height:1.3}
+.day.hol .num>span:first-child{color:var(--holiday)}
+.day.out{background:#fff}
+.day.out .num,.day.out .chip,.day.out .evt{opacity:.45}
+.chip{display:block;text-align:center;border-radius:8px;padding:4px;font-size:14px;font-weight:800;letter-spacing:.03em;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge.restday,.chip.restday,.chip-inline.restday,.wdate.restday,.note-date.restday,.lt.restday{background:var(--rest-bg);color:var(--rest-fg);box-shadow:inset 0 0 0 1.5px var(--rest-bd)}
+.lt{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:6px;font-size:12px;font-weight:800;padding:0 5px;line-height:1}
+.lt.offshore{background:var(--on-bg);color:var(--on-fg);box-shadow:inset 0 0 0 1.5px var(--on-bd)}
+.lt.offdays{background:var(--off-bg);color:var(--off-fg);box-shadow:inset 0 0 0 1.5px var(--off-bd)}
+.shift-pick{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 12px}
+.shift-pick .seg button{padding:6px 12px;gap:8px}
+.changed{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--primary);background:var(--ice);border:1px solid var(--border);border-radius:999px;padding:2px 8px}
+.day .chg{width:6px;height:6px;border-radius:50%;background:var(--primary);flex:none}
+.letters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:8px 0 18px}
+.letters label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:600;color:var(--muted)}
+.letters input{text-align:center;font-weight:800;text-transform:uppercase}
+.chip.offshore{background:var(--on-bg);color:var(--on-fg);box-shadow:inset 0 0 0 1.5px var(--on-bd)}
+.chip.offdays{background:var(--off-bg);color:var(--off-fg);box-shadow:inset 0 0 0 1.5px var(--off-bd)}
+.chip-inline{display:inline-flex;align-items:center;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700}
+.chip-inline.offshore{background:var(--on-bg);color:var(--on-fg);box-shadow:inset 0 0 0 1.5px var(--on-bd)}
+.chip-inline.offdays{background:var(--off-bg);color:var(--off-fg);box-shadow:inset 0 0 0 1.5px var(--off-bd)}
+.evt{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:500;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.evt i{width:6px;height:6px;border-radius:50%;flex:none;background:var(--primary)}
+.evt.hol{color:var(--holiday);font-weight:600}.evt.hol i{background:var(--holiday)}
+.evt.ot i{background:var(--ot)}
+.evt span{overflow:hidden;text-overflow:ellipsis}
+.evt.more{color:var(--muted);padding-left:10px}
+.dots{display:none;gap:3px;justify-content:center}
+.dots i{width:5px;height:5px;border-radius:50%;background:var(--text)}
+.dots i.hol{background:var(--holiday)}.dots i.ot{background:var(--ot)}
+.day.today{border:2px solid var(--offshore);padding:6px}
+.day.today .num>span:first-child{background:var(--offshore);color:#fff;border-radius:999px;min-width:24px;height:24px;display:inline-grid;place-items:center;padding:0 6px}
+.day.selected{outline:3px solid var(--text);outline-offset:1px;z-index:1}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:4px;display:inline-block}
+.legend i.lg{width:20px;height:20px;border-radius:5px;display:inline-grid;place-items:center;font-style:normal;font-size:11px;font-weight:800}
+.legend i.lg .icon{width:12px;height:12px;stroke-width:2.4}
+.legend i.lg.on{background:var(--on-bg);color:var(--on-fg);box-shadow:inset 0 0 0 1.5px var(--on-bd)}
+.legend i.lg.rest{background:var(--rest-bg);color:var(--rest-fg);box-shadow:inset 0 0 0 1.5px var(--rest-bd)}
+.legend i.lg.off{background:var(--off-bg);color:var(--off-fg);box-shadow:inset 0 0 0 1.5px var(--off-bd)}
+.cal-body{touch-action:pan-y}
+
+/* week */
+.week{display:flex;flex-direction:column;gap:8px}
+.wrow{display:flex;gap:14px;align-items:stretch;border:1px solid var(--border);border-radius:14px;background:#fff;padding:10px 12px;cursor:pointer;text-align:left;width:100%;transition:border-color .15s}
+.wrow:hover{border-color:#B4D4EF}
+.wrow.today{border:2px solid var(--offshore);padding:9px 11px}
+.wrow.selected{outline:3px solid var(--text);outline-offset:1px}
+.wdate{width:54px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:12px;padding:6px 0}
+.wdate.offshore{background:var(--on-bg);color:var(--on-fg);box-shadow:inset 0 0 0 1.5px var(--on-bd)}
+.wdate.offdays{background:var(--off-bg);color:var(--off-fg);box-shadow:inset 0 0 0 1.5px var(--off-bd)}
+.wdow{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.wnum{font-size:22px;font-weight:800;line-height:1.1}
+.wmain{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;justify-content:center}
+.wstatus{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
+.wline{font-size:13px;display:flex;gap:8px;align-items:center;min-width:0}
+.wline .t{font-variant-numeric:tabular-nums;color:var(--muted);flex:none;min-width:86px}
+.wline span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wline.hol{color:var(--holiday);font-weight:600}
+
+/* ---------- Day agenda (Apple-style) ---------- */
+.agenda{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
+.agenda-head{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+.agenda-date{font-weight:700;font-size:16px}
+.agenda-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:3px}
+.agenda-actions{display:flex;gap:8px}
+.ev-list{display:flex;flex-direction:column;gap:8px}
+.ev{display:flex;gap:12px;align-items:stretch;background:var(--ice);border:1px solid var(--border);border-radius:14px;padding:10px 12px;cursor:pointer;text-align:left;width:100%;transition:background .15s}
+.ev:hover{background:#E6F2FD}
+.ev .bar{width:4px;border-radius:4px;background:var(--primary);flex:none}
+.ev.ot .bar{background:var(--ot)}
+.ev.hol{background:var(--holiday-bg);border-color:#F5D3D6;cursor:default}
+.ev.hol .bar{background:var(--holiday)}
+.ev-time{width:74px;flex:none;font-size:13px;font-variant-numeric:tabular-nums;line-height:1.35}
+.ev-time b{display:block;font-weight:600}
+.ev-time span{color:var(--muted)}
+.ev-body{flex:1;min-width:0}
+.ev-title{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ev-sub{font-size:13px;color:var(--muted);white-space:pre-wrap;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:#fff;border:1px solid var(--border);color:var(--primary);vertical-align:middle;margin-left:6px}
+.tag.ot{color:var(--ot);border-color:#BFE6DC;background:#fff}
+.empty-mini{font-size:13px;color:var(--muted);padding:6px 2px}
+
+/* ---------- Side cards ---------- */
+.side-card{padding:18px}
+.side-card .card-title{justify-content:space-between}
+.up-list{display:flex;flex-direction:column;gap:10px}
+.up-item{display:flex;gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--ice);border:1px solid var(--border)}
+.up-ico{width:46px;height:46px;border-radius:50%;background:#fff;color:var(--primary);display:grid;place-items:center;flex:none;border:1px solid var(--border)}
+.up-item.offshore .up-ico{background:var(--on-bg);color:var(--on-fg);border-color:var(--on-bd)}
+.up-item.offdays .up-ico{background:var(--off-bg);color:var(--off-fg);border-color:var(--off-bd)}
+.up-main{flex:1;min-width:0}
+.up-title{font-weight:700;display:flex;align-items:center;gap:6px}
+.up-dates{font-size:13px;color:#1F3F72;margin-top:2px}
+.pill{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:999px;background:var(--ice);border:1px solid var(--border);font-size:12px;font-weight:700}
+.now-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;background:var(--primary);color:#fff;border-radius:999px;padding:2px 7px}
+.pattern-mini{display:flex;align-items:center;justify-content:space-around;gap:8px;text-align:center;padding:6px 0}
+.pattern-mini .ring{width:58px;height:58px;border-radius:50%;background:var(--ice);border:1px solid var(--border);display:grid;place-items:center;color:var(--primary);margin:0 auto 6px}
+.pattern-mini .ring .icon{width:26px;height:26px}
+.pattern-mini b{display:block}
+.pattern-mini small{color:var(--muted)}
+.hol-list{display:flex;flex-direction:column;gap:8px}
+.hol-item{display:flex;gap:10px;align-items:center;font-size:13px}
+.hol-date{width:44px;flex:none;text-align:center;border-radius:10px;background:var(--holiday-bg);color:var(--holiday);padding:4px 0;line-height:1.1}
+.hol-date b{display:block;font-size:16px}
+.hol-date small{font-size:10px;font-weight:700;text-transform:uppercase}
+
+/* ---------- Notes ---------- */
+.notes-card{padding:20px}
+.notes-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.notes-head .card-title{margin:0}
+.ot-total{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--ot);background:var(--ot-bg);border-radius:999px;padding:5px 12px}
+.ot-total .icon{width:15px;height:15px}
+.empty{display:flex;align-items:center;gap:16px;background:var(--ice);border:1px solid var(--border);border-radius:16px;padding:20px}
+.empty .icon{width:44px;height:44px;color:var(--primary);stroke-width:1.6}
+.empty h3{margin:0;font-size:17px}
+.empty p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.empty .btn{margin-left:auto}
+.note-list{display:flex;flex-direction:column;gap:10px}
+.note{display:flex;gap:14px;align-items:flex-start;padding:12px;border-radius:16px;border:1px solid var(--border);background:#fff;transition:border-color .15s,background .15s}
+.note.sel{border-color:#9CC7EE;background:#F7FBFF}
+.note-date{width:52px;flex:none;text-align:center;border-radius:12px;padding:6px 0;background:var(--ice);cursor:pointer;border:0}
+.note-date.offshore{background:var(--on-bg);color:var(--on-fg);box-shadow:inset 0 0 0 1.5px var(--on-bd)}
+.note-date.offdays{background:var(--off-bg);color:var(--off-fg);box-shadow:inset 0 0 0 1.5px var(--off-bd)}
+.note-date b{display:block;font-size:20px;line-height:1.1}
+.note-date small{font-size:11px;font-weight:600;text-transform:uppercase}
+.note-body{flex:1;min-width:0}
+.note-title{font-weight:700;overflow-wrap:anywhere}
+.note-time{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:1px}
+.note-content{margin-top:4px;font-size:14px;color:#2A4677;white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.note-actions{display:flex;gap:6px}
+
+/* ---------- Forms ---------- */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;min-width:0}
+.field>label,.label{font-size:13px;font-weight:600;color:var(--muted)}
+.input{width:100%;border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:#fff;min-height:44px;font-size:16px;transition:border-color .15s,box-shadow .15s}
+.input:focus{outline:none;border-color:#7DB8F0;box-shadow:0 0 0 3px rgba(0,91,187,.12)}
+textarea.input{resize:vertical;min-height:96px;line-height:1.45}
+.hint{font-size:12px;color:var(--muted)}
+.error{color:var(--danger);font-size:13px;font-weight:500}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper .input{text-align:center;font-weight:700}
+.form-actions{display:flex;align-items:center;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:6px}
+.form-actions .dirty{margin-right:auto;font-size:13px;color:var(--muted)}
+.switch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;cursor:pointer}
+.switch input{appearance:none;-webkit-appearance:none;width:50px;height:30px;border-radius:999px;background:#D4DEEA;position:relative;cursor:pointer;transition:background .2s;flex:none;margin:0}
+.switch input::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18);transition:transform .2s var(--ease)}
+.switch input:checked{background:var(--primary)}
+.switch input:checked::after{transform:translateX(20px)}
+/* grouped iOS-style rows inside entry modal */
+.group{border:1px solid var(--border);border-radius:14px;background:var(--ice);padding:2px 14px;margin-bottom:14px}
+.group .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);min-height:48px}
+.group .row:last-child{border-bottom:0}
+.group .row label{font-weight:500;color:var(--text);font-size:15px}
+.group .row input[type=date],.group .row input[type=time]{border:0;background:#fff;border-radius:10px;padding:6px 10px;font-size:16px;min-height:36px;color:var(--text);border:1px solid var(--border)}
+.duration{font-weight:700;color:var(--ot);font-variant-numeric:tabular-nums}
+
+/* ---------- Pattern & Settings pages ---------- */
+.pattern-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;margin-top:24px;align-items:start}
+.form-card{padding:22px}
+.preview-now{background:var(--ice);border:1px solid var(--border);border-radius:14px;padding:12px 14px;font-size:14px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:16px}
+.strip-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
+.strip{display:grid;gap:2px;margin-bottom:10px}
+.strip span{height:28px;border-radius:4px}
+.strip span.offshore{background:var(--on-bg);box-shadow:inset 0 0 0 1.5px var(--on-bd)}
+.strip span.offdays{background:var(--off-bg);box-shadow:inset 0 0 0 1.5px var(--off-bd)}
+.strip span.now{outline:2px solid var(--text);outline-offset:1px;position:relative;z-index:1}
+.period-list{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.period-list li{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border:1px solid var(--border);border-radius:12px;font-size:14px}
+.period-list li .muted{margin-left:auto;font-size:13px}
+.settings-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:24px;align-items:start}
+.settings-grid .card{padding:22px}
+.settings-grid p{margin:0 0 14px;color:var(--muted);font-size:14px}
+.kv{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.kv div{display:flex;justify-content:space-between;gap:10px;font-size:14px;border-bottom:1px dashed var(--border);padding-bottom:6px}
+.kv div span:first-child{color:var(--muted)}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:10px;margin:8px 0 18px}
+.swatch{width:40px;height:40px;border-radius:12px;border:1px solid rgba(16,42,86,.14);cursor:pointer;position:relative;display:grid;place-items:center;padding:0;transition:transform .15s,box-shadow .15s}
+.swatch:active{transform:scale(.92)}
+.swatch .icon{width:18px;height:18px;stroke-width:3}
+.swatch.sel{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--text)}
+.swatch.custom{background:conic-gradient(#F2665A,#F5A524,#FFE89A,#2E9E4F,#0E9384,#4A9BE3,#7A5AF8,#E2457A,#F2665A);overflow:hidden}
+.swatch.custom input{opacity:0;position:absolute;inset:0;width:100%;height:100%;cursor:pointer;border:0;padding:0}
+.swatch-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.swatch-head code{font-size:12px;color:var(--muted)}
+.mini-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:4px 0 18px}
+.mini-week div{border:1px solid var(--border);border-radius:10px;padding:6px 4px;background:#fff;display:flex;flex-direction:column;gap:5px;font-weight:700;font-size:13px;min-width:0}
+.mini-week .chip{font-size:10px;padding:4px 1px}
+.ring.offshore{background:var(--on-bg)!important;color:var(--on-fg)!important;border-color:var(--on-bd)!important}
+.ring.offdays{background:var(--off-bg)!important;color:var(--off-fg)!important;border-color:var(--off-bd)!important}
+.side-stack{display:flex;flex-direction:column;gap:20px;min-width:0}
+.mode-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;border-radius:999px;padding:4px 10px;background:var(--ice);color:var(--primary);border:1px solid var(--border)}
+
+/* ---------- Modal / toast / auth ---------- */
+.modal-backdrop{position:fixed;inset:0;background:rgba(16,42,86,.32);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);display:grid;place-items:center;z-index:100;padding:16px;animation:fade .2s ease}
+.modal{width:min(500px,100%);max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:22px;padding:20px 22px;box-shadow:0 24px 60px rgba(16,42,86,.25);animation:pop .25s var(--ease)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.modal-head h2{margin:0;font-size:20px}
+.modal-actions{display:flex;gap:10px;align-items:center;margin-top:8px}
+.modal-actions .spacer{flex:1}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff;padding:12px 18px;border-radius:14px;font-weight:500;font-size:14px;opacity:0;pointer-events:none;transition:all .25s var(--ease);z-index:200;max-width:calc(100vw - 32px);box-shadow:0 10px 30px rgba(16,42,86,.3)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--danger)}
+.auth-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(160deg,#0754A3,#0866C6 45%,var(--ice) 45.1%)}
+.auth-card{width:min(420px,100%);padding:28px}
+.auth-logo{width:60px;height:60px;border-radius:18px;background:var(--ice);color:var(--primary);display:grid;place-items:center;margin-bottom:14px}
+.auth-logo .icon{width:30px;height:30px}
+.auth-card h1{margin:0;font-size:26px;letter-spacing:-.02em}
+.auth-card>p{margin:6px 0 20px;color:var(--muted)}
+.auth-switch{text-align:center;font-size:14px;margin:14px 0 0;color:var(--muted)}
+.auth-msg{font-size:14px;margin:10px 0 0}
+.loading{min-height:100vh;display:grid;place-items:center;color:var(--primary);font-weight:600}
+.spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--primary);animation:spin .8s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1240px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .col-side{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+}
+@media (max-width:1100px){
+  .summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .main{padding:28px 24px 48px}
+  :root{--sidebar-w:210px}
+}
+@media (max-width:860px){
+  .pattern-layout,.settings-grid{grid-template-columns:1fr}
+  .day{min-height:84px}
+  .evt{display:none}
+  .evt.hol{display:flex}
+  .dots{display:flex}
+}
+@media (max-width:720px){
+  .sidebar{display:none}
+  .main{margin-left:0;padding:calc(16px + env(safe-area-inset-top)) 14px calc(100px + env(safe-area-inset-bottom))}
+  .page-head h1{font-size:30px}
+  .page-head p{font-size:15px}
+  .summary{gap:10px;margin:18px 0}
+  .stat{padding:12px;gap:10px;align-items:flex-start;flex-direction:column}
+  .stat-ico{width:38px;height:38px}
+  .stat-ico .icon{width:19px;height:19px}
+  .stat-value{font-size:18px}
+  .badge{font-size:14px;padding:4px 12px}
+  .cal-card,.notes-card,.side-card{padding:14px}
+  .cal-toolbar{gap:8px}
+  .cal-toolbar .seg{order:1}
+  .toolbar-right{order:2}
+  .navgroup{order:3;width:100%;justify-content:space-between}
+  .cal-label{flex:1;min-width:0}
+  .toolbar-right .btn .lbl{display:none}
+  .toolbar-right .btn{padding:10px 12px}
+  .grid7{gap:3px}
+  .dow div{font-size:12px;padding:8px 0}
+  .day{min-height:58px;padding:4px;border-radius:10px;align-items:center;gap:3px}
+  .day .num{justify-content:center;font-size:14px}
+  .day .evt,.day .evt.hol{display:none}
+  .day .chip{width:100%;padding:3px 0;border-radius:7px;font-size:13px}
+  .day.hol .num>span:first-child{color:var(--holiday)}
+  .day.out .num,.day.out .chip{opacity:.4}
+  .day.today{border:2px solid var(--offshore);padding:3px}
+  .day.today .num>span:first-child{min-width:22px;height:22px;padding:0 5px}
+  .shift-pick .seg{width:100%}
+  .shift-pick .seg button{flex:1;padding:6px 4px;gap:6px;font-size:13px}
+  .agenda-actions{width:100%}
+  .agenda-actions .btn{flex:1}
+  .empty{flex-direction:column;text-align:center}
+  .empty .btn{margin-left:0}
+  .note{gap:10px}
+  .bottomnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,255,255,.92);-webkit-backdrop-filter:saturate(180%) blur(16px);backdrop-filter:saturate(180%) blur(16px);border-top:1px solid var(--border);padding:6px 10px calc(6px + env(safe-area-inset-bottom))}
+  .bottomnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;color:var(--muted);font-size:11px;font-weight:600;padding:6px 0;cursor:pointer;border-radius:12px}
+  .bottomnav button .icon{width:24px;height:24px}
+  .bottomnav button.active{color:var(--primary)}
+  .modal-backdrop{place-items:end center;padding:0}
+  .modal{width:100%;border-radius:22px 22px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));max-height:92vh;animation:sheet .3s var(--ease)}
+  .toast{bottom:calc(92px + env(safe-area-inset-bottom))}
+  .field-row{grid-template-columns:1fr 1fr;gap:10px}
+}
+@keyframes sheet{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+</style>
+</head>
+<body>
+<div id="loading" class="loading"><div><div class="spinner"></div>Loading…</div></div>
+<div id="auth" class="hidden"></div>
+<div id="app" class="hidden">
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="brand"><span data-icon="calendar"></span><div class="brand-name">Offshore<br>Schedule</div></div>
+    <nav class="nav">
+      <button class="nav-item" data-action="nav" data-page="calendar"><span data-icon="calendar"></span>Calendar</button>
+      <button class="nav-item" data-action="nav" data-page="pattern"><span data-icon="layers"></span>Shift Pattern</button>
+      <button class="nav-item" data-action="nav" data-page="settings"><span data-icon="settings"></span>Settings</button>
+    </nav>
+    <div class="sidebar-foot">
+      <button class="profile-btn" data-action="nav" data-page="settings"><span class="avatar" id="avatar">P</span><span class="pname" id="pname">Personal</span><span data-icon="chevronDown"></span></button>
+    </div>
+  </aside>
+  <main class="main"><div id="banner"></div><div id="page"></div></main>
+  <nav class="bottomnav" aria-label="Main navigation">
+    <button data-action="nav" data-page="calendar"><span data-icon="calendar"></span>Calendar</button>
+    <button data-action="nav" data-page="pattern"><span data-icon="layers"></span>Shift Pattern</button>
+    <button data-action="nav" data-page="settings"><span data-icon="settings"></span>Settings</button>
+  </nav>
+</div>
+<div id="modal-root"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ===================== Icons (Lucide, ISC licence) ===================== */
+const ICONS={
+  calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  calendarDays:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>',
+  week:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M3 16h18"/>',
+  layers:'<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>',
+  settings:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  home:'<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  plus:'<path d="M5 12h14M12 5v14"/>',
+  minus:'<path d="M5 12h14"/>',
+  left:'<path d="m15 18-6-6 6-6"/>',
+  right:'<path d="m9 18 6-6-6-6"/>',
+  chevronDown:'<path d="m6 9 6 6 6-6"/>',
+  note:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8M16 17H8M10 9H8"/>',
+  pencil:'<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>',
+  trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  check:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  download:'<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/>',
+  reset:'<path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>',
+  arrow:'<path d="M5 12h14M12 5l7 7-7 7"/>',
+  save:'<path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/>',
+  sliders:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/>',
+  user:'<circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/>',
+  info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+  flag:'<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/>',
+  timer:'<path d="M10 2h4M12 14l3-3"/><circle cx="12" cy="14" r="8"/>',
+  palette:'<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+  tick:'<path d="M20 6 9 17l-5-5"/>',
+  database:'<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/>'
+};
+const I=(n,c='')=>`<svg class="icon ${c}" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]||''}</svg>`;
+document.querySelectorAll('[data-icon]').forEach(el=>{el.outerHTML=I(el.dataset.icon)});
+
+/* ===================== ROTATION-START (pure date logic) ===================== */
+const MS_DAY=86400000;
+const pad=n=>String(n).padStart(2,'0');
+const ymd=(y,m,d)=>`${y}-${pad(m)}-${pad(d)}`;
+function isYmd(s){if(!/^\d{4}-\d{2}-\d{2}$/.test(s||''))return false;const [y,m,d]=s.split('-').map(Number);const t=new Date(Date.UTC(y,m-1,d));return t.getUTCFullYear()===y&&t.getUTCMonth()===m-1&&t.getUTCDate()===d}
+/* Dates are handled as YYYY-MM-DD strings and converted to whole day numbers
+   via UTC, so daylight-saving and local-offset shifts can never move a date. */
+function dayNum(s){const [y,m,d]=s.split('-').map(Number);return Math.round(Date.UTC(y,m-1,d)/MS_DAY)}
+function fromDayNum(n){const t=new Date(n*MS_DAY);return ymd(t.getUTCFullYear(),t.getUTCMonth()+1,t.getUTCDate())}
+const addDays=(s,n)=>fromDayNum(dayNum(s)+n);
+const diffDays=(a,b)=>dayNum(b)-dayNum(a);
+const mod=(a,n)=>((a%n)+n)%n;
+const weekdayIdx=s=>mod(new Date(dayNum(s)*MS_DAY).getUTCDay()-1,7); // 0 = Monday
+const startOfWeek=s=>addDays(s,-weekdayIdx(s));
+function addMonths(s,n){const [y,m]=s.split('-').map(Number);const t=new Date(Date.UTC(y,m-1+n,1));return ymd(t.getUTCFullYear(),t.getUTCMonth()+1,1)}
+function lastOfMonth(s){return addDays(addMonths(s,1),-1)}
+function todayIn(tz){
+  try{const p=new Intl.DateTimeFormat('en-CA',{timeZone:tz,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+    const g=t=>p.find(x=>x.type===t).value;return `${g('year')}-${g('month')}-${g('day')}`}
+  catch(e){const d=new Date();return ymd(d.getFullYear(),d.getMonth()+1,d.getDate())}
+}
+const otherStatus=s=>s==='offshore'?'offdays':'offshore';
+const durationOf=(st,r)=>st==='offshore'?r.offshore_duration:r.offday_duration;
+/* The rotation start date is Day 1 of the starting status. */
+function statusOn(date,r){
+  const first=r.starting_status,second=otherStatus(first);
+  const L1=durationOf(first,r),L2=durationOf(second,r),cycle=L1+L2;
+  const pos=mod(diffDays(r.start_date,date),cycle);
+  if(pos<L1)return{status:first,dayOfPeriod:pos+1,length:L1,periodStart:addDays(date,-pos),cycleDay:pos+1,cycleLength:cycle};
+  const p=pos-L1;
+  return{status:second,dayOfPeriod:p+1,length:L2,periodStart:addDays(date,-p),cycleDay:pos+1,cycleLength:cycle};
+}
+function periodsFrom(date,r,count){
+  const out=[],s=statusOn(date,r);let st=s.status,start=s.periodStart,len=s.length;
+  for(let i=0;i<count;i++){out.push({status:st,start,end:addDays(start,len-1),length:len});start=addDays(start,len);st=otherStatus(st);len=durationOf(st,r)}
+  return out;
+}
+function periodsBetween(from,to,r){
+  const out=[],s=statusOn(from,r);let st=s.status,start=s.periodStart,len=s.length;
+  while(dayNum(start)<=dayNum(to)){out.push({status:st,start,end:addDays(start,len-1),length:len});start=addDays(start,len);st=otherStatus(st);len=durationOf(st,r)}
+  return out;
+}
+function nextChange(today,r){const s=statusOn(today,r);return{date:addDays(s.periodStart,s.length),status:otherStatus(s.status),daysUntil:s.length-s.dayOfPeriod+1}}
+/* Overtime minutes; an end time earlier than the start time crosses midnight. */
+function toMin(t){if(!t)return null;const [h,m]=t.split(':').map(Number);return h*60+m}
+function otMinutes(a,b){const s=toMin(a),e=toMin(b);if(s==null||e==null)return 0;return mod(e-s,1440)}
+/* ===================== ROTATION-END ===================== */
+
+/* ===================== Sarawak public holidays (built-in list, used in Preview mode) =====================
+   Same data as supabase/migrations/20261116000100_sarawak_holidays.sql. With Supabase connected
+   the app reads the public_holidays table instead, so you can add future years there. */
+const SARAWAK_HOLIDAYS=[
+ ['2026-01-01',"New Year's Day"],['2026-02-17','Chinese New Year'],['2026-02-18','Chinese New Year (2nd day)'],
+ ['2026-03-20','Hari Raya Aidilfitri (additional)'],['2026-03-21','Hari Raya Aidilfitri'],['2026-03-22','Hari Raya Aidilfitri (2nd day)'],['2026-03-23','Hari Raya Aidilfitri (replacement)',1],
+ ['2026-04-03','Good Friday'],['2026-05-01','Labour Day'],['2026-05-27','Hari Raya Haji'],['2026-05-31','Wesak Day'],
+ ['2026-06-01','Gawai Dayak'],['2026-06-01',"Agong's Birthday"],['2026-06-02','Gawai Dayak (2nd day)'],['2026-06-03','Wesak Day (replacement)',1],['2026-06-04',"Gawai / Agong's Birthday (replacement)",1],
+ ['2026-06-17','Awal Muharram'],['2026-07-22','Sarawak Day'],['2026-08-25',"Prophet Muhammad's Birthday"],['2026-08-31','National Day'],
+ ['2026-09-16','Malaysia Day'],['2026-10-10',"Sarawak Governor's Birthday"],['2026-12-25','Christmas Day'],
+ ['2027-01-01',"New Year's Day"],['2027-02-06','Chinese New Year'],['2027-02-07','Chinese New Year (2nd day)'],['2027-02-08','Chinese New Year (replacement)',1],
+ ['2027-03-10','Hari Raya Aidilfitri'],['2027-03-11','Hari Raya Aidilfitri (2nd day)'],['2027-03-26','Good Friday'],['2027-05-01','Labour Day'],
+ ['2027-05-17','Hari Raya Haji'],['2027-05-20','Wesak Day'],['2027-06-01','Gawai Dayak'],['2027-06-02','Gawai Dayak (2nd day)'],
+ ['2027-06-06','Awal Muharram'],['2027-06-07',"Agong's Birthday"],['2027-06-08','Awal Muharram (replacement)',1],['2027-07-22','Sarawak Day'],
+ ['2027-08-15',"Prophet Muhammad's Birthday"],['2027-08-16',"Prophet Muhammad's Birthday (replacement)",1],['2027-08-31','National Day'],
+ ['2027-09-16','Malaysia Day'],['2027-10-09',"Sarawak Governor's Birthday"],['2027-12-25','Christmas Day']
+].map(([d,n,r])=>({holiday_date:d,name:n,is_replacement:!!r}));
+
+/* ===================== Helpers ===================== */
+const LBL={offshore:'Offshore',restday:'Restday',offdays:'Offdays'};
+const SHIFTS=['offshore','restday','offdays'];
+const DEFAULT_TZ='Asia/Kuching';
+const DEFAULT_PREFS={default_view:'month',show_note_markers:true,show_holidays:true,offshore_color:'#0866C6',offdays_color:'#CDEEFF',restday_color:'#F5A524',card_style:'solid',letter_offshore:'S',letter_restday:'R',letter_offdays:'O'};
+/* ---------- Shift card colours ---------- */
+const PALETTE=[['#0866C6','Ocean blue'],['#005BBB','Royal blue'],['#102A56','Navy'],['#4A9BE3','Sky blue'],['#CDEEFF','Ice blue'],['#0E9384','Teal'],['#2E9E4F','Green'],['#BFF0DA','Mint'],['#E8F5C8','Lime'],['#F5A524','Amber'],['#FFE89A','Sunshine'],['#F2665A','Coral'],['#FFD9C7','Peach'],['#E2457A','Rose'],['#FFD6E5','Blush'],['#7A5AF8','Violet'],['#E4DDFF','Lavender'],['#64748B','Slate'],['#E5EAF0','Cloud grey']];
+const isHex=c=>/^#[0-9a-f]{6}$/i.test(c||'');
+const hexRgb=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16));
+function lum(c){const v=hexRgb(c).map(x=>{x/=255;return x<=.03928?x/12.92:((x+.055)/1.055)**2.4});return .2126*v[0]+.7152*v[1]+.0722*v[2]}
+function mix(a,b,t){const x=hexRgb(a),y=hexRgb(b);return'#'+x.map((v,i)=>Math.round(v*t+y[i]*(1-t)).toString(16).padStart(2,'0')).join('')}
+const isLight=c=>lum(c)>.4;
+function shiftVars(c,style){
+  const light=isLight(c);
+  if(style==='soft'){const bg=light?c:mix(c,'#FFFFFF',.16);return{bg,fg:light?'#102A56':(lum(c)>.18?mix(c,'#000000',.62):c),bd:bg}}
+  if(style==='outline')return{bg:'#FFFFFF',fg:light?'#102A56':c,bd:light?mix(c,'#102A56',.78):c};
+  return{bg:c,fg:light?'#102A56':'#FFFFFF',bd:c};
+}
+function applyColors(){
+  const p=prefs(),st=['solid','soft','outline'].includes(p.card_style)?p.card_style:'solid';
+  const on=shiftVars(isHex(p.offshore_color)?p.offshore_color:DEFAULT_PREFS.offshore_color,st),off=shiftVars(isHex(p.offdays_color)?p.offdays_color:DEFAULT_PREFS.offdays_color,st);
+  const r=document.documentElement.style;
+  r.setProperty('--on-bg',on.bg);r.setProperty('--on-fg',on.fg);r.setProperty('--on-bd',on.bd);
+  r.setProperty('--off-bg',off.bg);r.setProperty('--off-fg',off.fg);r.setProperty('--off-bd',off.bd);
+  const rs=shiftVars(isHex(p.restday_color)?p.restday_color:DEFAULT_PREFS.restday_color,st);r.setProperty('--rest-bg',rs.bg);r.setProperty('--rest-fg',rs.fg);r.setProperty('--rest-bd',rs.bd);
+}
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=(s,o)=>new Intl.DateTimeFormat('en-GB',{timeZone:'UTC',...o}).format(new Date(dayNum(s)*MS_DAY));
+const fmtShort=s=>fmt(s,{day:'2-digit',month:'short',year:'numeric'});
+const fmtDM=s=>fmt(s,{day:'2-digit',month:'short'});
+const fmtLong=s=>fmt(s,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const hm=t=>t?t.slice(0,5):'';
+function fmtDur(min){const h=Math.floor(min/60),m=min%60;return h&&m?`${h}h ${m}m`:h?`${h}h`:`${m}m`}
+function weeksLabel(n,cap){if(n%7===0){const w=n/7;return `${w} ${cap?'Week':'week'}${w>1?'s':''}`}return `${n} ${cap?'Days':'days'}`}
+const uuid=()=>(crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16)}));
+function validTz(tz){try{new Intl.DateTimeFormat('en',{timeZone:tz});return true}catch(e){return false}}
+function defaultRot(tz=DEFAULT_TZ){return{start_date:todayIn(tz),starting_status:'offshore',offshore_duration:14,offday_duration:14,timezone:tz}}
+function normRot(r){r=r||{};return{
+  start_date:isYmd(String(r.start_date||'').slice(0,10))?String(r.start_date).slice(0,10):todayIn(DEFAULT_TZ),
+  starting_status:r.starting_status==='offdays'?'offdays':'offshore',
+  offshore_duration:parseInt(r.offshore_duration,10)||14,offday_duration:parseInt(r.offday_duration,10)||14,
+  timezone:validTz(r.timezone)?r.timezone:DEFAULT_TZ}}
+function validateRot(r){
+  if(!isYmd(r.start_date))return'Choose a valid rotation start date.';
+  for(const [k,l] of [['offshore_duration','Offshore days'],['offday_duration','Offdays']]){const v=Number(r[k]);if(!Number.isInteger(v)||v<1||v>365)return `${l} must be a whole number from 1 to 365.`}
+  if(!validTz(r.timezone))return'Choose a valid timezone.';
+  return null;
+}
+function normNote(n){return{...n,note_date:String(n.note_date).slice(0,10),start_time:n.start_time?hm(n.start_time):null,end_time:n.end_time?hm(n.end_time):null,entry_type:n.entry_type==='overtime'?'overtime':'note',all_day:n.all_day!==false&&!n.start_time,content:n.content||''}}
+function sortEntries(a,b){if(a.note_date!==b.note_date)return a.note_date<b.note_date?-1:1;if(a.all_day!==b.all_day)return a.all_day?-1:1;return(a.start_time||'').localeCompare(b.start_time||'')||(a.created_at||'').localeCompare(b.created_at||'')}
+let toastTimer;
+function toast(msg,err){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(err?' err':'');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.className='toast',3200)}
+function errMsg(e){return(e&&(e.message||e.error_description))||'Something went wrong'}
+
+/* ===================== Data stores ===================== */
+const CFG=window.APP_CONFIG||{};
+const USE_SUPABASE=!!(CFG.SUPABASE_URL&&CFG.SUPABASE_ANON_KEY);
+
+/* Preview mode: browser storage only, clearly labelled in the UI. */
+const PreviewStore={
+  mode:'preview',key:'offshore-schedule.preview.v1',mem:null,
+  load(){if(this.mem)return this.mem;let d=null;try{d=JSON.parse(localStorage.getItem(this.key))}catch(e){}
+    this.mem=d&&d.rot?d:{profile:{name:'Personal',calendar_preferences:{...DEFAULT_PREFS}},rot:defaultRot(),notes:[]};return this.mem},
+  persist(){try{localStorage.setItem(this.key,JSON.stringify(this.mem))}catch(e){}},
+  email:()=>null,
+  async getProfile(){return{...this.load().profile}},
+  async saveProfile(p){const d=this.load();d.profile={...d.profile,...p};this.persist();return{...d.profile}},
+  async getRotation(){return{...this.load().rot}},
+  async saveRotation(r){const d=this.load();d.rot={...r};this.persist();return{...d.rot}},
+  async listNotes(from,to){return this.load().notes.filter(n=>n.note_date>=from&&n.note_date<=to).map(n=>({...n}))},
+  async addNote(n){const now=new Date().toISOString(),note={id:uuid(),...n,created_at:now,updated_at:now};this.load().notes.push(note);this.persist();return{...note}},
+  async updateNote(id,p){const n=this.load().notes.find(x=>x.id===id);if(!n)throw new Error('Note not found');Object.assign(n,p,{updated_at:new Date().toISOString()});this.persist();return{...n}},
+  async deleteNote(id){const d=this.load();d.notes=d.notes.filter(x=>x.id!==id);this.persist()},
+  async listOverrides(){return{...(this.load().overrides||{})}},
+  async setOverride(d,s){const x=this.load();x.overrides={...(x.overrides||{}),[d]:s};this.persist()},
+  async clearOverride(d){const x=this.load();if(x.overrides)delete x.overrides[d];this.persist()},
+  async listHolidays(from,to){return SARAWAK_HOLIDAYS.filter(h=>h.holiday_date>=from&&h.holiday_date<=to)},
+  async signOut(){}
+};
+
+/* Supabase mode: Postgres + Auth + row-level security. */
+const SupabaseStore={
+  mode:'supabase',sb:null,user:null,
+  async init(){const mod=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+    this.sb=mod.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}})},
+  email(){return this.user?.email||null},
+  q(res){if(res.error)throw res.error;return res.data},
+  async signIn(email,password){const d=this.q(await this.sb.auth.signInWithPassword({email,password}));this.user=d.user;return d},
+  async signUp(email,password,name){return this.q(await this.sb.auth.signUp({email,password,options:{data:{name},emailRedirectTo:location.href.split('#')[0]}}))},
+  async signOut(){await this.sb.auth.signOut();this.user=null},
+  async getProfile(){
+    const d=this.q(await this.sb.from('users').select('*').eq('id',this.user.id).maybeSingle());if(d)return d;
+    return this.q(await this.sb.from('users').insert({id:this.user.id,name:this.user.user_metadata?.name||this.user.email.split('@')[0]}).select().single())},
+  async saveProfile(p){return this.q(await this.sb.from('users').update(p).eq('id',this.user.id).select().single())},
+  async getRotation(){
+    const d=this.q(await this.sb.from('rotation_settings').select('*').eq('user_id',this.user.id).maybeSingle());if(d)return d;
+    return this.q(await this.sb.from('rotation_settings').insert({user_id:this.user.id,...defaultRot()}).select().single())},
+  async saveRotation(r){const row={start_date:r.start_date,starting_status:r.starting_status,offshore_duration:Number(r.offshore_duration),offday_duration:Number(r.offday_duration),timezone:r.timezone};
+    return this.q(await this.sb.from('rotation_settings').upsert({user_id:this.user.id,...row},{onConflict:'user_id'}).select().single())},
+  async listNotes(from,to){return this.q(await this.sb.from('notes').select('*').gte('note_date',from).lte('note_date',to).order('note_date').order('start_time',{nullsFirst:true}))},
+  async addNote(n){return this.q(await this.sb.from('notes').insert({...n,user_id:this.user.id}).select().single())},
+  async updateNote(id,p){return this.q(await this.sb.from('notes').update(p).eq('id',id).select().single())},
+  async deleteNote(id){this.q(await this.sb.from('notes').delete().eq('id',id))},
+  async listOverrides(){const rows=this.q(await this.sb.from('day_overrides').select('override_date,status'));return Object.fromEntries(rows.map(r=>[String(r.override_date).slice(0,10),r.status]))},
+  async setOverride(d,s){this.q(await this.sb.from('day_overrides').upsert({user_id:this.user.id,override_date:d,status:s},{onConflict:'user_id,override_date'}))},
+  async clearOverride(d){this.q(await this.sb.from('day_overrides').delete().eq('override_date',d))},
+  async listHolidays(from,to){return this.q(await this.sb.from('public_holidays').select('holiday_date,name,is_replacement').eq('region','sarawak').gte('holiday_date',from).lte('holiday_date',to).order('holiday_date'))}
+};
+
+/* ===================== State ===================== */
+const S={store:null,started:false,page:'calendar',view:'month',profile:null,rot:null,today:null,selected:null,cursor:null,
+  notes:[],notesKey:'',overrides:{},holidays:[],holKey:'',upcomingHolidays:[],draft:null,authMode:'signin'};
+const prefs=()=>({...DEFAULT_PREFS,...(S.profile?.calendar_preferences||{})});
+/* Effective shift for a day: a manual change (Restday etc.) wins over the generated rotation. */
+function dayInfo(d){const st=statusOn(d,S.rot),o=S.overrides[d];return{...st,rotStatus:st.status,status:o||st.status,overridden:!!o&&o!==st.status}}
+function letterOf(s){const v=String(prefs()['letter_'+s]||'').trim().toUpperCase().slice(0,2);return v||DEFAULT_PREFS['letter_'+s]}
+const lt=s=>`<span class="lt ${s}" aria-hidden="true">${esc(letterOf(s))}</span>`;
+const dayMeta=i=>i.overridden?`Changed · rotation ${LBL[i.rotStatus]} day ${i.dayOfPeriod}`:`Day ${i.dayOfPeriod} of ${i.length}`;
+
+function monthRange(c){const first=c.slice(0,8)+'01';const last=lastOfMonth(first);return{first,last,start:startOfWeek(first),end:addDays(startOfWeek(last),6)}}
+
+async function ensureData(force){
+  const {start,end}=monthRange(S.cursor);const key=start+'|'+end;
+  const jobs=[];
+  if(force||key!==S.notesKey)jobs.push(S.store.listNotes(start,end).then(r=>{S.notes=r.map(normNote).sort(sortEntries);S.notesKey=key}));
+  if(key!==S.holKey)jobs.push(S.store.listHolidays(start,end).then(r=>{S.holidays=r.map(h=>({...h,holiday_date:String(h.holiday_date).slice(0,10)}));S.holKey=key}).catch(e=>{S.holidays=[];S.holKey=key;console.warn(e)}));
+  await Promise.all(jobs);
+}
+async function loadUpcomingHolidays(){
+  try{const r=await S.store.listHolidays(S.today,addDays(S.today,365));S.upcomingHolidays=r.map(h=>({...h,holiday_date:String(h.holiday_date).slice(0,10)})).slice(0,4)}catch(e){S.upcomingHolidays=[]}
+}
+async function startApp(){
+  if(S.started)return;S.started=true;
+  try{
+    S.profile=await S.store.getProfile();
+    S.profile.calendar_preferences={...DEFAULT_PREFS,...(S.profile.calendar_preferences||{})};
+    S.rot=normRot(await S.store.getRotation());
+    S.today=todayIn(S.rot.timezone);S.selected=S.today;S.cursor=S.today;S.view=prefs().default_view==='week'?'week':'month';
+    await Promise.all([ensureData(true),loadUpcomingHolidays(),S.store.listOverrides().then(o=>{S.overrides=o||{}})]);
+    show('app');render();
+  }catch(e){S.started=false;console.error(e);showFatal(errMsg(e))}
+}
+function show(id){for(const x of ['loading','auth','app'])document.getElementById(x).classList.toggle('hidden',x!==id)}
+function showFatal(msg){show('loading');document.getElementById('loading').innerHTML=`<div class="card" style="padding:24px;max-width:460px;margin:20px"><h2 style="margin-top:0">Couldn't load your schedule</h2><p class="muted">${esc(msg)}</p><p class="muted">Check the Supabase URL/key in index.html and that both migrations ran.</p><button class="btn btn-primary" onclick="location.reload()">Try again</button></div>`}
+
+/* ===================== Rendering ===================== */
+function render(){
+  applyColors();
+  document.querySelectorAll('[data-action="nav"]').forEach(b=>b.classList.toggle('active',b.dataset.page===S.page));
+  const name=S.profile?.name||'Personal';
+  document.getElementById('pname').textContent=name;
+  document.getElementById('avatar').textContent=(name.trim()[0]||'P').toUpperCase();
+  document.getElementById('banner').innerHTML=S.store.mode==='preview'?`<div class="banner">${I('info')}<div><b>Preview mode</b> — data is saved in this browser only. Add your Supabase URL and key in <code>index.html</code> to use the real database.</div></div>`:'';
+  const page=document.getElementById('page');
+  page.innerHTML=S.page==='calendar'?calendarPage():S.page==='pattern'?patternPage():settingsPage();
+  if(S.page==='pattern')renderPatternPreview();
+}
+function stat(icon,label,value,sub){return`<div class="card stat"><div class="stat-ico">${I(icon)}</div><div><div class="stat-label">${label}</div><div class="stat-value">${value}</div><div class="stat-sub">${sub}</div></div></div>`}
+function subtitle(r){return `${weeksLabel(r.offshore_duration,true)} Offshore • ${weeksLabel(r.offday_duration,true)} Offdays`}
+const holidaysOn=d=>prefs().show_holidays?S.holidays.filter(h=>h.holiday_date===d):[];
+const notesOn=d=>S.notes.filter(n=>n.note_date===d);
+
+function calendarPage(){
+  const r=S.rot,t=S.today,cur=dayInfo(t),nc=nextChange(t,r);
+  const inTxt=nc.daysUntil===1?'tomorrow':`in ${nc.daysUntil} days`;
+  return `<header class="page-head"><h1>Offshore Schedule</h1><p>${subtitle(r)}</p></header>
+  <section class="summary">
+    ${stat('calendar','Offshore Days',`${r.offshore_duration} days`,`(${weeksLabel(r.offshore_duration)})`)}
+    ${stat('home','Offdays',`${r.offday_duration} days`,`(${weeksLabel(r.offday_duration)})`)}
+    <div class="card stat"><div class="stat-ico">${I('refresh')}</div><div><div class="stat-label">Current Status</div><span class="badge ${cur.status}">${LBL[cur.status]}</span><div class="stat-sub">${cur.overridden?'Changed for today':`Day ${cur.dayOfPeriod} of ${cur.length}`}</div></div></div>
+    ${stat('calendarDays','Next Change',fmtShort(nc.date),`(${LBL[nc.status]}) · ${inTxt}`)}
+  </section>
+  <div class="layout">
+    <div class="col-main">
+      <section class="card cal-card" aria-label="Calendar">${calToolbar()}<div class="cal-body" id="cal-body">${S.view==='month'?monthBody():weekBody()}</div>
+        <div class="legend"><span><i class="lg on">${esc(letterOf('offshore'))}</i>Offshore</span><span><i class="lg rest">${esc(letterOf('restday'))}</i>Restday</span><span><i class="lg off">${esc(letterOf('offdays'))}</i>Offdays</span><span><i style="background:var(--holiday)"></i>Public holiday</span><span><i style="background:var(--ot)"></i>Overtime</span><span><i style="background:var(--primary)"></i>Note</span></div>
+        ${agenda()}</section>
+      ${notesSection()}
+    </div>
+    <aside class="col-side">${upcomingCard()}${holidayCard()}${patternMini()}</aside>
+  </div>`;
+}
+function calToolbar(){
+  let label;
+  if(S.view==='month')label=fmt(S.cursor,{month:'long',year:'numeric'});
+  else{const ws=startOfWeek(S.cursor),we=addDays(ws,6);label=ws.slice(0,7)===we.slice(0,7)?`${Number(ws.slice(8))} – ${fmt(we,{day:'numeric',month:'short',year:'numeric'})}`:`${fmt(ws,{day:'numeric',month:'short'})} – ${fmt(we,{day:'numeric',month:'short',year:'numeric'})}`}
+  return `<div class="cal-toolbar">
+    <div class="seg" role="tablist"><button role="tab" aria-selected="${S.view==='month'}" class="${S.view==='month'?'active':''}" data-action="view" data-view="month">${I('calendar')}Month</button><button role="tab" aria-selected="${S.view==='week'}" class="${S.view==='week'?'active':''}" data-action="view" data-view="week">${I('week')}Week</button></div>
+    <div class="navgroup"><button class="icon-btn" data-action="prev" aria-label="Previous">${I('left')}</button><div class="cal-label" aria-live="polite">${label}</div><button class="icon-btn" data-action="next" aria-label="Next">${I('right')}</button></div>
+    <div class="toolbar-right"><button class="btn btn-ghost" data-action="today">Today</button><button class="btn btn-primary" data-action="add-entry">${I('plus')}<span class="lbl">Add Note</span></button></div>
+  </div>`;
+}
+function evtLines(d,max){
+  const hs=holidaysOn(d),ns=prefs().show_note_markers?notesOn(d):[];
+  const items=[...hs.map(h=>`<span class="evt hol" title="${esc(h.name)}"><i></i><span>${esc(h.name)}</span></span>`),
+    ...ns.map(n=>`<span class="evt ${n.entry_type==='overtime'?'ot':''}" title="${esc(n.title)}"><i></i><span>${n.all_day?'':hm(n.start_time)+' '}${esc(n.title)}</span></span>`)];
+  const shown=items.slice(0,max).join('');const more=items.length>max?`<span class="evt more">+${items.length-max} more</span>`:'';
+  const dots=[...hs.map(()=>'<i class="hol"></i>'),...ns.map(n=>`<i class="${n.entry_type==='overtime'?'ot':''}"></i>`)].slice(0,3).join('');
+  return shown+more+(dots?`<span class="dots">${dots}</span>`:'');
+}
+function monthBody(){
+  const {start,end,first}=monthRange(S.cursor),month=first.slice(0,7);
+  const dows=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((x,i)=>`<div class="${i>4?'we':''}">${x}</div>`).join('');
+  let cells='';
+  for(let d=start;dayNum(d)<=dayNum(end);d=addDays(d,1)){
+    const st=dayInfo(d),out=d.slice(0,7)!==month,hs=holidaysOn(d),ns=notesOn(d);
+    const cls=['day','st-'+st.status,out&&'out',d===S.today&&'today',d===S.selected&&'selected',hs.length&&'hol'].filter(Boolean).join(' ');
+    const aria=`${fmtLong(d)}, ${LBL[st.status]}, ${dayMeta(st)}${hs.length?', '+hs.map(h=>h.name).join(', '):''}${ns.length?`, ${ns.length} entr${ns.length>1?'ies':'y'}`:''}`;
+    cells+=`<button class="${cls}" data-action="select" data-date="${d}" aria-label="${esc(aria)}" aria-pressed="${d===S.selected}"><span class="num"><span>${Number(d.slice(8))}</span>${st.overridden?'<i class="chg" title="Changed by you"></i>':''}</span><span class="chip ${st.status}" title="${LBL[st.status]}">${esc(letterOf(st.status))}</span>${evtLines(d,2)}</button>`;
+  }
+  return `<div class="grid7 dow">${dows}</div><div class="grid7">${cells}</div>`;
+}
+function weekBody(){
+  const ws=startOfWeek(S.cursor);let rows='';
+  for(let i=0;i<7;i++){
+    const d=addDays(ws,i),st=dayInfo(d),hs=holidaysOn(d),ns=notesOn(d);
+    const cls=['wrow',d===S.today&&'today',d===S.selected&&'selected'].filter(Boolean).join(' ');
+    rows+=`<button class="${cls}" data-action="select" data-date="${d}" aria-pressed="${d===S.selected}">
+      <div class="wdate ${st.status}"><span class="wdow">${fmt(d,{weekday:'short'})}</span><span class="wnum">${Number(d.slice(8))}</span><span class="wdow">${esc(letterOf(st.status))}</span></div>
+      <div class="wmain"><div class="wstatus"><span class="chip-inline ${st.status}">${LBL[st.status]}</span><span class="muted">${dayMeta(st)}</span>${d===S.today?'<span class="now-tag">Today</span>':''}</div>
+      ${hs.map(h=>`<div class="wline hol">${I('flag')}<span>${esc(h.name)}</span></div>`).join('')}
+      ${ns.map(n=>`<div class="wline"><span class="t">${n.all_day?'All day':`${hm(n.start_time)}${n.end_time?'–'+hm(n.end_time):''}`}</span><span>${n.entry_type==='overtime'?'<b style="color:var(--ot)">OT</b> ':''}${esc(n.title)}</span></div>`).join('')}
+      </div></button>`;
+  }
+  return `<div class="week">${rows}</div>`;
+}
+function entryTimeHtml(n){
+  if(n.all_day)return'<b>All day</b>';
+  return `<b>${hm(n.start_time)}</b>${n.end_time?`<span>${hm(n.end_time)}</span>`:''}`;
+}
+function agenda(){
+  const d=S.selected,st=dayInfo(d),hs=holidaysOn(d),ns=notesOn(d);
+  const ot=ns.filter(n=>n.entry_type==='overtime').reduce((a,n)=>a+otMinutes(n.start_time,n.end_time),0);
+  const list=[...hs.map(h=>`<div class="ev hol"><span class="bar"></span><div class="ev-time"><b>All day</b></div><div class="ev-body"><div class="ev-title">${esc(h.name)}</div><div class="ev-sub">Sarawak public holiday</div></div></div>`),
+    ...ns.map(n=>`<button class="ev ${n.entry_type==='overtime'?'ot':''}" data-action="edit-entry" data-id="${n.id}"><span class="bar"></span><div class="ev-time">${entryTimeHtml(n)}</div><div class="ev-body"><div class="ev-title">${esc(n.title)}${n.entry_type==='overtime'?`<span class="tag ot">OT ${fmtDur(otMinutes(n.start_time,n.end_time))}</span>`:''}</div>${n.content?`<div class="ev-sub">${esc(n.content)}</div>`:''}</div></button>`)].join('');
+  return `<section class="agenda" aria-label="Selected day">
+    <div class="agenda-head"><div><div class="agenda-date">${fmtLong(d)}</div><div class="agenda-meta"><span class="chip-inline ${st.status}">${LBL[st.status]}</span><span>${dayMeta(st)}</span>${ot?`<span class="ot-total">${I('timer')}OT ${fmtDur(ot)}</span>`:''}</div></div>
+    <div class="agenda-actions"><button class="btn btn-ghost" data-action="add-entry" data-type="note" data-date="${d}">${I('note')}Note</button><button class="btn btn-ghost" data-action="add-entry" data-type="overtime" data-date="${d}" style="color:var(--ot)">${I('timer')}Overtime</button></div></div>
+    <div class="shift-pick"><span class="label">Shift</span><div class="seg" role="radiogroup" aria-label="Shift for this day">${SHIFTS.map(s=>`<button type="button" role="radio" aria-checked="${st.status===s}" class="${st.status===s?'active':''}" data-action="set-shift" data-date="${d}" data-value="${s}">${lt(s)}${LBL[s]}</button>`).join('')}</div>${st.overridden?`<button type="button" class="link-btn" data-action="set-shift" data-date="${d}" data-value="${st.rotStatus}">${I('reset')} Back to rotation (${LBL[st.rotStatus]})</button>`:''}</div>
+    <div class="ev-list">${list||'<div class="empty-mini">Nothing on this day. Tap Note or Overtime to add one.</div>'}</div></section>`;
+}
+function notesSection(){
+  const {first,last}=monthRange(S.cursor);
+  const items=S.notes.filter(n=>n.note_date>=first&&n.note_date<=last);
+  const ot=items.filter(n=>n.entry_type==='overtime').reduce((a,n)=>a+otMinutes(n.start_time,n.end_time),0);
+  const monthName=fmt(first,{month:'long',year:'numeric'});
+  const body=items.length?`<div class="note-list">${items.map(n=>{const st=dayInfo(n.note_date);return`<article class="note ${n.note_date===S.selected?'sel':''}">
+      <button class="note-date ${st.status}" data-action="select" data-date="${n.note_date}" aria-label="Go to ${fmtLong(n.note_date)}"><b>${Number(n.note_date.slice(8))}</b><small>${fmt(n.note_date,{weekday:'short'})}</small></button>
+      <div class="note-body"><div class="note-title">${esc(n.title)}${n.entry_type==='overtime'?`<span class="tag ot">${I('timer')}OT ${fmtDur(otMinutes(n.start_time,n.end_time))}</span>`:''}</div>
+      <div class="note-time">${n.all_day?'All day':`${hm(n.start_time)}${n.end_time?' – '+hm(n.end_time):''}`} · ${LBL[st.status]}</div>
+      ${n.content?`<div class="note-content">${esc(n.content)}</div>`:''}</div>
+      <div class="note-actions"><button class="icon-btn sm" data-action="edit-entry" data-id="${n.id}" aria-label="Edit">${I('pencil')}</button><button class="icon-btn sm" data-action="delete-entry" data-id="${n.id}" aria-label="Delete">${I('trash')}</button></div></article>`}).join('')}</div>`
+    :`<div class="empty">${I('check')}<div><h3>No notes for this month</h3><p>Add a note or overtime to keep track of your schedule.</p></div><button class="btn btn-primary" data-action="add-entry">${I('pencil')}Add Note</button></div>`;
+  return `<section class="card notes-card" aria-label="Notes"><div class="notes-head"><h2 class="card-title">${I('note')}Notes <span class="muted" style="font-weight:500;font-size:14px">${monthName}</span></h2>${ot?`<span class="ot-total">${I('timer')}Overtime this month: ${fmtDur(ot)}</span>`:''}</div>${body}</section>`;
+}
+function upcomingCard(){
+  const ps=periodsFrom(S.today,S.rot,3);
+  return `<section class="card side-card"><h2 class="card-title">Upcoming Schedule</h2><div class="up-list">${ps.map((p,i)=>`<div class="up-item ${p.status}"><div class="up-ico">${I(p.status==='offshore'?'calendar':'home')}</div><div class="up-main"><div class="up-title">${LBL[p.status]}${i===0?'<span class="now-tag">Now</span>':''}</div><div class="up-dates">${fmtDM(p.start)} – ${fmtShort(p.end)}</div><span class="pill">${p.length} days</span></div></div>`).join('')}</div></section>`;
+}
+function holidayCard(){
+  if(!prefs().show_holidays)return'';
+  const hs=S.upcomingHolidays;
+  return `<section class="card side-card"><h2 class="card-title">Sarawak Holidays</h2>${hs.length?`<div class="hol-list">${hs.map(h=>{const st=dayInfo(h.holiday_date);return`<button class="hol-item link-btn" style="color:inherit;text-align:left;font-weight:400" data-action="goto" data-date="${h.holiday_date}"><div class="hol-date"><b>${Number(h.holiday_date.slice(8))}</b><small>${fmt(h.holiday_date,{month:'short'})}</small></div><div><b style="font-weight:600">${esc(h.name)}</b><div class="muted">${fmt(h.holiday_date,{weekday:'short'})} · you're <span class="chip-inline ${st.status}" style="padding:0 8px">${LBL[st.status]}</span></div></div></button>`}).join('')}</div>`:'<p class="muted" style="margin:0;font-size:14px">No holidays loaded for the next 12 months. Add future years to the public_holidays table.</p>'}</section>`;
+}
+function patternMini(){
+  const r=S.rot,a=r.starting_status,b=otherStatus(a);
+  const node=s=>`<div><div class="ring ${s}">${I(s==='offshore'?'calendar':'home')}</div><b>${LBL[s]}</b><small>(${weeksLabel(durationOf(s,r),true)})</small></div>`;
+  return `<section class="card side-card"><h2 class="card-title">Shift Pattern<button class="icon-btn sm" data-action="nav" data-page="pattern" aria-label="Edit shift pattern">${I('refresh')}</button></h2><div class="pattern-mini">${node(a)}<span class="muted">${I('arrow')}</span>${node(b)}</div></section>`;
+}
+
+/* ---------- Shift Pattern page ---------- */
+function patternPage(){
+  if(!S.draft)S.draft={...S.rot};
+  const d=S.draft;
+  return `<header class="page-head"><h1>Shift Pattern</h1><p>Set it once — every past and future date is calculated automatically.</p></header>
+  <div class="pattern-layout">
+    <form class="card form-card" data-form="pattern" novalidate>
+      <h2 class="card-title">${I('layers')}Rotation settings</h2>
+      <div class="field"><label for="p-start">Rotation start date</label><input id="p-start" class="input" type="date" data-draft="start_date" value="${d.start_date}" required><span class="hint">This date counts as Day 1 of the starting status.</span></div>
+      <div class="field"><span class="label">Starting status</span><div class="seg seg-full" role="radiogroup" id="p-status">${['offshore','offdays'].map(s=>`<button type="button" role="radio" aria-checked="${d.starting_status===s}" class="${d.starting_status===s?'active':''}" data-action="draft-status" data-value="${s}">${I(s==='offshore'?'calendar':'home')}${LBL[s]}</button>`).join('')}</div></div>
+      <div class="field-row">${stepper('offshore_duration','Offshore days')}${stepper('offday_duration','Offdays')}</div>
+      <div class="field"><label for="p-tz">Timezone</label><select id="p-tz" class="input" data-draft="timezone">${tzOptions(d.timezone)}</select><span class="hint">“Today” and the current status are worked out in this timezone.</span></div>
+      <div class="form-actions"><span class="dirty" id="dirty"></span><button type="button" class="btn btn-ghost" data-action="revert-pattern">Revert</button><button type="submit" class="btn btn-primary">${I('save')}Save Changes</button></div>
+    </form>
+    <div class="side-stack"><section class="card form-card" id="pattern-preview" aria-live="polite"></section>${colourCard()}</div>
+  </div>`;
+}
+function stepper(f,label){return`<div class="field"><label for="p-${f}">${label}</label><div class="stepper"><button type="button" class="icon-btn" data-action="draft-step" data-field="${f}" data-delta="-1" aria-label="Decrease ${label}">${I('minus')}</button><input id="p-${f}" class="input" type="number" inputmode="numeric" min="1" max="365" step="1" data-draft="${f}" value="${S.draft[f]}"><button type="button" class="icon-btn" data-action="draft-step" data-field="${f}" data-delta="1" aria-label="Increase ${label}">${I('plus')}</button></div></div>`}
+let TZ_LIST=null;
+function tzOptions(sel){
+  if(!TZ_LIST){try{TZ_LIST=Intl.supportedValuesOf('timeZone')}catch(e){TZ_LIST=['Asia/Kuching','Asia/Kuala_Lumpur','Asia/Singapore','Asia/Jakarta','Asia/Brunei','Asia/Manila','Asia/Bangkok','Asia/Dubai','Australia/Perth','Europe/London','UTC']}}
+  const list=TZ_LIST.includes(sel)?TZ_LIST:[sel,...TZ_LIST];
+  return list.map(z=>`<option value="${esc(z)}" ${z===sel?'selected':''}>${esc(z.replace(/_/g,' '))}</option>`).join('');
+}
+function draftDirty(){const a=S.draft,b=S.rot;return['start_date','starting_status','offshore_duration','offday_duration','timezone'].some(k=>String(a[k])!==String(b[k]))}
+function renderPatternPreview(){
+  const el=document.getElementById('pattern-preview');if(!el)return;
+  const dirty=document.getElementById('dirty');if(dirty)dirty.textContent=draftDirty()?'Unsaved changes':'All changes saved';
+  const err=validateRot(S.draft);
+  if(err){el.innerHTML=`<h2 class="card-title">${I('refresh')}Rotation preview</h2><p class="error">${esc(err)}</p>`;return}
+  const r={...S.draft,offshore_duration:Number(S.draft.offshore_duration),offday_duration:Number(S.draft.offday_duration)};
+  const t=todayIn(r.timezone),st=statusOn(t,r),cyc=r.offshore_duration+r.offday_duration,L1=durationOf(r.starting_status,r);
+  let strip='';if(cyc<=120)for(let i=0;i<cyc;i++){const s=i<L1?r.starting_status:otherStatus(r.starting_status);strip+=`<span class="${s} ${i+1===st.cycleDay?'now':''}" title="Cycle day ${i+1}: ${LBL[s]}"></span>`}
+  const ps=periodsFrom(t,r,6);
+  el.innerHTML=`<h2 class="card-title">${I('refresh')}Rotation preview</h2>
+    <div class="preview-now">Today, ${fmtShort(t)}: <span class="chip-inline ${st.status}">${LBL[st.status]}</span><span class="muted">Day ${st.dayOfPeriod} of ${st.length}</span></div>
+    ${strip?`<div class="strip-label"><span>${cyc}-day repeating cycle</span><span>Today = cycle day ${st.cycleDay}</span></div><div class="strip" style="grid-template-columns:repeat(${cyc},minmax(0,1fr))">${strip}</div>`:''}
+    <div class="legend" style="margin-top:4px"><span><i style="background:var(--on-bg);box-shadow:inset 0 0 0 1.5px var(--on-bd)"></i>Offshore ${r.offshore_duration} days</span><span><i style="background:var(--off-bg);box-shadow:inset 0 0 0 1.5px var(--off-bd)"></i>Offdays ${r.offday_duration} days</span></div>
+    <ul class="period-list">${ps.map((p,i)=>`<li><span class="chip-inline ${p.status}">${LBL[p.status]}</span><span>${fmtShort(p.start)} – ${fmtShort(p.end)}</span><span class="muted">${p.length} days${i===0?' · current':''}</span></li>`).join('')}</ul>`;
+}
+
+/* ---------- Shift card colour picker ---------- */
+function colourCard(){
+  const p=prefs(),ws=startOfWeek(S.today);
+  const days=Array.from({length:7},(_,i)=>addDays(ws,i));
+  const sw=(key)=>{const cur=(p[key]||'').toUpperCase(),inPal=PALETTE.some(([c])=>c===cur);
+    return `<div class="swatches" role="radiogroup" aria-label="${LBL[key.replace('_color','')]} colour">${PALETTE.map(([c,n])=>`<button type="button" class="swatch ${c===cur?'sel':''}" style="background:${c}" data-action="pick-color" data-key="${key}" data-color="${c}" role="radio" aria-checked="${c===cur}" aria-label="${n}" title="${n}">${c===cur?`<span style="color:${isLight(c)?'#102A56':'#fff'}">${I('tick')}</span>`:''}</button>`).join('')}
+      <label class="swatch custom ${!inPal?'sel':''}" title="Custom colour" ${!inPal?`style="background:${cur}"`:''}><input type="color" data-color-key="${key}" value="${cur.toLowerCase()}" aria-label="Custom colour">${!inPal?`<span style="color:${isLight(cur)?'#102A56':'#fff'}">${I('tick')}</span>`:I('plus')}</label></div>`};
+  return `<section class="card form-card" id="colours"><h2 class="card-title">${I('palette')}Shift card colours</h2>
+    <p class="muted" style="margin:0 0 12px;font-size:14px">Each day shows its shift as a lettered card. Pick colours and letters — changes save automatically.</p>
+    <div class="mini-week" aria-hidden="true">${days.map((d,i)=>{const s=i===3?'restday':dayInfo(d).status;return`<div><span>${Number(d.slice(8))}</span><span class="chip ${s}" title="${LBL[s]}">${esc(letterOf(s))}</span></div>`}).join('')}</div>
+    <span class="label">Card style</span>
+    <div class="seg seg-full" role="radiogroup" style="margin:8px 0 18px">${[['solid','Solid'],['soft','Soft'],['outline','Outline']].map(([v,l])=>`<button type="button" role="radio" aria-checked="${p.card_style===v}" class="${p.card_style===v?'active':''}" data-action="pick-style" data-value="${v}">${l}</button>`).join('')}</div>
+    <div class="swatch-head"><span class="label">Offshore card</span><code>${esc(p.offshore_color)}</code></div>${sw('offshore_color')}
+    <div class="swatch-head"><span class="label">Restday card</span><code>${esc(p.restday_color)}</code></div>${sw('restday_color')}
+    <div class="swatch-head"><span class="label">Offdays card</span><code>${esc(p.offdays_color)}</code></div>${sw('offdays_color')}
+    <span class="label">Card letters</span>
+    <div class="letters">${SHIFTS.map(s=>`<label>${LBL[s]}<input class="input" maxlength="2" autocapitalize="characters" autocomplete="off" data-letter-key="letter_${s}" value="${esc(letterOf(s))}"></label>`).join('')}</div>
+    <div class="form-actions"><button type="button" class="btn btn-ghost" data-action="reset-colors">${I('reset')}Default colours & letters</button></div>
+  </section>`;
+}
+let colourSaveTimer;
+function setColourPrefs(patch,save=true){
+  S.profile.calendar_preferences={...prefs(),...patch};applyColors();
+  const el=document.getElementById('colours');if(el)el.outerHTML=colourCard();
+  if(S.page==='pattern')renderPatternPreview();
+  if(!save)return;
+  clearTimeout(colourSaveTimer);
+  colourSaveTimer=setTimeout(()=>go(async()=>{await S.store.saveProfile({calendar_preferences:S.profile.calendar_preferences});toast('Colours saved')}),450);
+}
+
+/* ---------- Settings page ---------- */
+function settingsPage(){
+  const p=prefs(),r=S.rot,email=S.store.email();
+  const months=[3,6,12,24];
+  return `<header class="page-head"><h1>Settings</h1><p>Profile, timezone, calendar and data</p></header>
+  <div class="settings-grid">
+    <form class="card" data-form="profile"><h2 class="card-title">${I('user')}Profile</h2>
+      <div class="field"><label for="s-name">Name</label><input id="s-name" name="name" class="input" maxlength="100" value="${esc(S.profile.name||'')}" placeholder="Your name"></div>
+      ${email?`<div class="field"><label>Email</label><input class="input" value="${esc(email)}" disabled></div>`:''}
+      <div class="kv"><div><span>Storage</span><span class="mode-pill">${I('database')}${S.store.mode==='supabase'?'Supabase database':'Preview · this browser only'}</span></div></div>
+      <div class="form-actions">${S.store.mode==='supabase'?`<button type="button" class="btn btn-ghost" data-action="sign-out">${I('logout')}Sign out</button>`:''}<button class="btn btn-primary" type="submit">${I('save')}Save profile</button></div>
+    </form>
+    <form class="card" data-form="tz"><h2 class="card-title">${I('globe')}Default timezone</h2>
+      <p>Used to decide which calendar date is “today” and for the current status. Default: Asia/Kuching.</p>
+      <div class="field"><label for="s-tz">Timezone</label><select id="s-tz" name="timezone" class="input">${tzOptions(r.timezone)}</select></div>
+      <div class="form-actions"><span class="dirty">Today there: ${fmtShort(todayIn(r.timezone))}</span><button class="btn btn-primary" type="submit">${I('save')}Save timezone</button></div>
+    </form>
+    <form class="card" data-form="prefs"><h2 class="card-title">${I('sliders')}Calendar preferences</h2>
+      <div class="field"><label for="s-view">Default view</label><select id="s-view" name="default_view" class="input"><option value="month" ${p.default_view==='month'?'selected':''}>Month</option><option value="week" ${p.default_view==='week'?'selected':''}>Week</option></select></div>
+      <label class="switch"><span>Show Sarawak public holidays</span><input type="checkbox" name="show_holidays" ${p.show_holidays?'checked':''}></label>
+      <label class="switch"><span>Show notes & overtime on calendar days</span><input type="checkbox" name="show_note_markers" ${p.show_note_markers?'checked':''}></label>
+      <p class="hint" style="margin:6px 0 12px">Weeks always start on Monday.</p>
+      <div class="form-actions"><button class="btn btn-primary" type="submit">${I('save')}Save preferences</button></div>
+    </form>
+    ${colourCard()}
+    <div class="card"><h2 class="card-title">${I('layers')}Rotation configuration</h2>
+      <div class="kv"><div><span>Start date (Day 1)</span><b>${fmtShort(r.start_date)}</b></div><div><span>Starting status</span><b>${LBL[r.starting_status]}</b></div><div><span>Offshore</span><b>${r.offshore_duration} days</b></div><div><span>Offdays</span><b>${r.offday_duration} days</b></div><div><span>Cycle</span><b>${r.offshore_duration+r.offday_duration} days</b></div></div>
+      <div class="form-actions"><button class="btn btn-primary" type="button" data-action="nav" data-page="pattern">${I('pencil')}Edit rotation</button></div>
+    </div>
+    <form class="card" data-form="export"><h2 class="card-title">${I('download')}Export calendar (ICS)</h2>
+      <p>Download a .ics file for Apple Calendar, Google Calendar or Outlook. On iPhone, open the file to add it to Calendar.</p>
+      <div class="field"><label for="s-months">Range</label><select id="s-months" name="months" class="input">${months.map(m=>`<option value="${m}" ${m===12?'selected':''}>This month + next ${m} months</option>`).join('')}</select></div>
+      <label class="switch"><span>Include notes & overtime</span><input type="checkbox" name="include_notes" checked></label>
+      <label class="switch"><span>Include Sarawak public holidays</span><input type="checkbox" name="include_holidays" checked></label>
+      <div class="form-actions"><button class="btn btn-primary" type="submit">${I('download')}Export .ics</button></div>
+    </form>
+    <div class="card"><h2 class="card-title">${I('reset')}Reset rotation settings</h2>
+      <p>Restores the default 14 Offshore / 14 Offdays rotation starting today as Offshore Day 1. Your notes, overtime and timezone are kept.</p>
+      <div class="form-actions"><button class="btn btn-danger" type="button" data-action="reset-rotation">${I('reset')}Reset rotation</button></div>
+    </div>
+  </div>`;
+}
+
+/* ---------- Auth ---------- */
+function renderAuth(msg,isErr){
+  show('auth');const up=S.authMode==='signup';
+  document.getElementById('auth').innerHTML=`<div class="auth-wrap"><div class="card auth-card"><div class="auth-logo">${I('calendar')}</div><h1>Offshore Schedule</h1><p>${up?'Create your account to save your rotation and notes.':'Sign in to your schedule.'}</p>
+    <form data-form="auth" novalidate>
+      ${up?`<div class="field"><label for="a-name">Name</label><input id="a-name" name="name" class="input" autocomplete="name" maxlength="100"></div>`:''}
+      <div class="field"><label for="a-email">Email</label><input id="a-email" name="email" type="email" class="input" autocomplete="email" required></div>
+      <div class="field"><label for="a-pass">Password</label><input id="a-pass" name="password" type="password" class="input" autocomplete="${up?'new-password':'current-password'}" minlength="6" required></div>
+      <button class="btn btn-primary" type="submit" style="width:100%">${up?'Create account':'Sign in'}</button>
+      ${msg?`<p class="auth-msg ${isErr?'error':''}">${esc(msg)}</p>`:''}
+      <p class="auth-switch">${up?'Already have an account?':'New here?'} <button type="button" class="link-btn" data-action="auth-toggle">${up?'Sign in':'Create an account'}</button></p>
+    </form></div></div>`;
+}
+
+/* ---------- Modals ---------- */
+function openModal(html){
+  const root=document.getElementById('modal-root');
+  root.innerHTML=`<div class="modal-backdrop" data-action="backdrop"><div class="modal" role="dialog" aria-modal="true">${html}</div></div>`;
+  const f=root.querySelector('[autofocus]');if(f&&matchMedia('(pointer:fine)').matches)setTimeout(()=>f.focus(),60);
+}
+function closeModal(){document.getElementById('modal-root').innerHTML=''}
+function entryModal(entry,opts={}){
+  const isOT=entry?entry.entry_type==='overtime':opts.type==='overtime';
+  const date=entry?entry.note_date:(opts.date||S.selected);
+  const allDay=entry?entry.all_day:!isOT;
+  const st=entry?.start_time||(isOT?'18:00':'09:00'),et=entry?.end_time||(isOT?'21:00':'10:00');
+  openModal(`<form data-form="entry" data-id="${entry?entry.id:''}" novalidate>
+    <div class="modal-head"><h2>${entry?'Edit entry':'New entry'}</h2><button type="button" class="icon-btn" data-action="close-modal" aria-label="Close">${I('x')}</button></div>
+    <div class="seg seg-full" role="radiogroup" style="margin-bottom:14px" id="e-type">
+      <button type="button" role="radio" aria-checked="${!isOT}" class="${!isOT?'active':''}" data-action="entry-type" data-value="note">${I('note')}Note</button>
+      <button type="button" role="radio" aria-checked="${isOT}" class="${isOT?'active':''}" data-action="entry-type" data-value="overtime">${I('timer')}Overtime</button></div>
+    <input type="hidden" name="entry_type" value="${isOT?'overtime':'note'}">
+    <div class="field"><input name="title" class="input" maxlength="200" required autofocus placeholder="${isOT?'Overtime (e.g. Shutdown support)':'Title'}" value="${esc(entry?.title||'')}" aria-label="Title"></div>
+    <div class="group">
+      <div class="row" id="row-allday" ${isOT?'style="display:none"':''}><label for="e-allday">All-day</label><label class="switch" style="padding:0"><input id="e-allday" type="checkbox" name="all_day" ${allDay?'checked':''}></label></div>
+      <div class="row"><label for="e-date">Date</label><input id="e-date" type="date" name="note_date" value="${date}" required></div>
+      <div class="row" id="row-start" ${allDay&&!isOT?'style="display:none"':''}><label for="e-start">Starts</label><input id="e-start" type="time" name="start_time" value="${st}"></div>
+      <div class="row" id="row-end" ${allDay&&!isOT?'style="display:none"':''}><label for="e-end">Ends</label><input id="e-end" type="time" name="end_time" value="${et}"></div>
+      <div class="row" id="row-dur" ${isOT?'':'style="display:none"'}><label>Overtime</label><span class="duration" id="e-dur"></span></div>
+    </div>
+    <div class="field"><textarea name="content" class="input" rows="4" maxlength="10000" placeholder="Notes" aria-label="Notes">${esc(entry?.content||'')}</textarea></div>
+    <p class="hint" id="e-status"></p>
+    <p class="error" id="e-error" role="alert"></p>
+    <div class="modal-actions">${entry?`<button type="button" class="btn btn-danger" data-action="delete-entry" data-id="${entry.id}">${I('trash')}Delete</button>`:''}<span class="spacer"></span><button type="button" class="btn btn-ghost" data-action="close-modal">Cancel</button><button type="submit" class="btn btn-primary">${I('save')}Save</button></div>
+  </form>`);
+  updateEntryForm();
+}
+function updateEntryForm(){
+  const f=document.querySelector('[data-form="entry"]');if(!f)return;
+  const isOT=f.entry_type.value==='overtime',allDay=!isOT&&f.all_day.checked;
+  f.querySelector('#row-allday').style.display=isOT?'none':'';
+  f.querySelector('#row-start').style.display=allDay?'none':'';
+  f.querySelector('#row-end').style.display=allDay?'none':'';
+  f.querySelector('#row-dur').style.display=isOT?'':'none';
+  f.title.placeholder=isOT?'Overtime (e.g. Shutdown support)':'Title';
+  if(isOT){const m=otMinutes(f.start_time.value,f.end_time.value);const cross=toMin(f.end_time.value)<toMin(f.start_time.value);f.querySelector('#e-dur').textContent=f.start_time.value&&f.end_time.value?fmtDur(m)+(cross?' (past midnight)':''):'—'}
+  const d=f.note_date.value;if(isYmd(d)){const s=dayInfo(d);const h=S.holidays.concat(S.upcomingHolidays,SARAWAK_HOLIDAYS).find(x=>x.holiday_date===d);f.querySelector('#e-status').innerHTML=`${fmtLong(d)} · <span class="chip-inline ${s.status}">${LBL[s.status]}</span> ${dayMeta(s)}${h&&prefs().show_holidays?` · <b style="color:var(--holiday)">${esc(h.name)}</b>`:''}`}
+}
+function confirmModal(title,text,action,id,label){
+  openModal(`<div class="modal-head"><h2>${title}</h2><button type="button" class="icon-btn" data-action="close-modal" aria-label="Close">${I('x')}</button></div><p class="muted">${text}</p><div class="modal-actions"><span class="spacer"></span><button class="btn btn-ghost" data-action="close-modal">Cancel</button><button class="btn btn-danger solid" data-action="${action}" data-id="${id||''}">${label}</button></div>`);
+}
+
+/* ===================== ICS export ===================== */
+function icsEsc(s){return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\r?\n/g,'\\n')}
+function icsFold(line){const out=[];let s=line;while(s.length>73){out.push(s.slice(0,73));s=' '+s.slice(73)}out.push(s);return out.join('\r\n')}
+const icsDate=d=>d.replace(/-/g,'');
+function buildICS(r,from,to,notes,holidays){
+  const stamp=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Offshore Schedule//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:Offshore Schedule','X-WR-TIMEZONE:'+r.timezone];
+  for(const p of periodsBetween(from,to,r))L.push('BEGIN:VEVENT',`UID:rotation-${p.start}-${p.status}@offshore-schedule`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${icsDate(p.start)}`,`DTEND;VALUE=DATE:${icsDate(addDays(p.end,1))}`,`SUMMARY:${LBL[p.status]} (${p.length} days)`,`DESCRIPTION:${icsEsc(`${LBL[p.status]} ${fmtShort(p.start)} – ${fmtShort(p.end)}`)}`,'TRANSP:TRANSPARENT','END:VEVENT');
+  for(const [d,s] of Object.entries(S.overrides||{}).filter(([d])=>d>=from&&d<=to).sort())L.push('BEGIN:VEVENT',`UID:shift-${d}@offshore-schedule`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${icsDate(d)}`,`DTEND;VALUE=DATE:${icsDate(addDays(d,1))}`,`SUMMARY:${LBL[s]} (changed)`,'TRANSP:TRANSPARENT','END:VEVENT');
+  for(const h of holidays)L.push('BEGIN:VEVENT',`UID:holiday-${h.holiday_date}-${icsEsc(h.name).replace(/[^A-Za-z0-9]/g,'')}@offshore-schedule`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${icsDate(h.holiday_date)}`,`DTEND;VALUE=DATE:${icsDate(addDays(h.holiday_date,1))}`,`SUMMARY:${icsEsc(h.name)} (Sarawak holiday)`,'TRANSP:TRANSPARENT','END:VEVENT');
+  for(const n of notes){
+    const ev=['BEGIN:VEVENT',`UID:note-${n.id}@offshore-schedule`,`DTSTAMP:${stamp}`];
+    const title=(n.entry_type==='overtime'?`OT ${fmtDur(otMinutes(n.start_time,n.end_time))}: `:'')+n.title;
+    if(n.all_day)ev.push(`DTSTART;VALUE=DATE:${icsDate(n.note_date)}`,`DTEND;VALUE=DATE:${icsDate(addDays(n.note_date,1))}`);
+    else{const s=n.start_time.replace(':','')+'00';let endDate=n.note_date,e;
+      if(n.end_time){e=n.end_time.replace(':','')+'00';if(toMin(n.end_time)<=toMin(n.start_time))endDate=addDays(n.note_date,1)}
+      else{const m=toMin(n.start_time)+60;e=pad(Math.floor(m/60)%24)+pad(m%60)+'00';if(m>=1440)endDate=addDays(n.note_date,1)}
+      ev.push(`DTSTART;TZID=${r.timezone}:${icsDate(n.note_date)}T${s}`,`DTEND;TZID=${r.timezone}:${icsDate(endDate)}T${e}`)}
+    ev.push(`SUMMARY:${icsEsc(title)}`);if(n.content)ev.push(`DESCRIPTION:${icsEsc(n.content)}`);ev.push('END:VEVENT');L.push(...ev);
+  }
+  L.push('END:VCALENDAR');return L.map(icsFold).join('\r\n')+'\r\n';
+}
+
+/* ===================== Actions ===================== */
+async function go(fn){try{await fn()}catch(e){console.error(e);toast(errMsg(e),true)}}
+async function refresh(){await ensureData();render()}
+function busy(btn,on){if(!btn)return;btn.disabled=on}
+
+document.addEventListener('click',e=>{
+  const el=e.target.closest('[data-action]');if(!el)return;
+  const a=el.dataset.action;
+  if(a==='backdrop'&&e.target!==el)return;
+  switch(a){
+    case'nav':closeModal();S.page=el.dataset.page;if(S.page==='pattern')S.draft={...S.rot};render();window.scrollTo({top:0,behavior:'smooth'});break;
+    case'view':S.view=el.dataset.view;render();break;
+    case'prev':case'next':{const k=a==='next'?1:-1;S.cursor=S.view==='month'?addMonths(S.cursor,k):addDays(S.cursor,7*k);if(S.view==='week')S.selected=addDays(S.selected,7*k);go(refresh);break}
+    case'today':S.today=todayIn(S.rot.timezone);S.cursor=S.today;S.selected=S.today;go(refresh);break;
+    case'select':case'goto':{const d=el.dataset.date;S.selected=d;if(a==='goto')S.page='calendar';const mr=monthRange(S.cursor);if(d<mr.first||d>mr.last||a==='goto'||S.view==='week')S.cursor=d;go(async()=>{await refresh();if(a==='goto')document.getElementById('cal-body')?.scrollIntoView({behavior:'smooth'})});break}
+    case'add-entry':entryModal(null,{type:el.dataset.type,date:el.dataset.date});break;
+    case'edit-entry':{const n=S.notes.find(x=>x.id===el.dataset.id);if(n)entryModal(n);break}
+    case'delete-entry':{const n=S.notes.find(x=>x.id===el.dataset.id);if(n)confirmModal('Delete entry?',`“${esc(n.title)}” on ${fmtShort(n.note_date)} will be permanently deleted.`,'confirm-delete',n.id,'Delete');break}
+    case'confirm-delete':busy(el,true);go(async()=>{await S.store.deleteNote(el.dataset.id);closeModal();await ensureData(true);render();toast('Entry deleted')}).finally(()=>busy(el,false));break;
+    case'entry-type':{const f=el.closest('form');f.entry_type.value=el.dataset.value;f.querySelectorAll('#e-type button').forEach(b=>{const on=b.dataset.value===el.dataset.value;b.classList.toggle('active',on);b.setAttribute('aria-checked',on)});
+      if(el.dataset.value==='overtime'){if(!f.start_time.value)f.start_time.value='18:00';if(!f.end_time.value)f.end_time.value='21:00'}updateEntryForm();break}
+    case'close-modal':case'backdrop':closeModal();break;
+    case'draft-status':S.draft.starting_status=el.dataset.value;document.querySelectorAll('#p-status button').forEach(b=>{const on=b.dataset.value===el.dataset.value;b.classList.toggle('active',on);b.setAttribute('aria-checked',on)});renderPatternPreview();break;
+    case'draft-step':{const f=el.dataset.field,v=Math.min(365,Math.max(1,(parseInt(S.draft[f],10)||0)+Number(el.dataset.delta)));S.draft[f]=v;document.getElementById('p-'+f).value=v;renderPatternPreview();break}
+    case'revert-pattern':S.draft={...S.rot};render();break;
+    case'reset-rotation':confirmModal('Reset rotation?','Your rotation will go back to 14 Offshore / 14 Offdays, starting today as Offshore Day 1. Notes, overtime, changed days and timezone are kept.','confirm-reset','','Reset');break;
+    case'confirm-reset':busy(el,true);go(async()=>{const r={...defaultRot(S.rot.timezone)};S.rot=normRot(await S.store.saveRotation(r));S.draft={...S.rot};S.today=todayIn(S.rot.timezone);closeModal();render();toast('Rotation reset to 14 / 14')}).finally(()=>busy(el,false));break;
+    case'set-shift':{const d=el.dataset.date,v=el.dataset.value,info=dayInfo(d);if(v===info.status)break;busy(el,true);
+      go(async()=>{if(v===info.rotStatus){await S.store.clearOverride(d);delete S.overrides[d];toast(`${fmtDM(d)} back to rotation (${LBL[v]})`)}
+        else{await S.store.setOverride(d,v);S.overrides[d]=v;toast(`${fmtDM(d)} set to ${LBL[v]}`)}render()}).finally(()=>busy(el,false));break}
+    case'pick-color':setColourPrefs({[el.dataset.key]:el.dataset.color});break;
+    case'pick-style':setColourPrefs({card_style:el.dataset.value});break;
+    case'reset-colors':setColourPrefs({offshore_color:DEFAULT_PREFS.offshore_color,offdays_color:DEFAULT_PREFS.offdays_color,restday_color:DEFAULT_PREFS.restday_color,card_style:'solid',letter_offshore:'S',letter_restday:'R',letter_offdays:'O'});break;
+    case'sign-out':go(async()=>{await S.store.signOut();S.started=false;S.notesKey='';S.holKey='';S.authMode='signin';renderAuth()});break;
+    case'auth-toggle':S.authMode=S.authMode==='signin'?'signup':'signin';renderAuth();break;
+  }
+});
+document.addEventListener('input',e=>{
+  if(e.target.dataset?.colorKey){S.profile.calendar_preferences={...prefs(),[e.target.dataset.colorKey]:e.target.value.toUpperCase()};applyColors();return}
+  const k=e.target.dataset?.draft;
+  if(k&&S.draft){S.draft[k]=e.target.type==='number'?(e.target.value===''?'':Number(e.target.value)):e.target.value;renderPatternPreview();return}
+  if(e.target.closest('[data-form="entry"]'))updateEntryForm();
+});
+document.addEventListener('change',e=>{if(e.target.dataset?.letterKey){const v=e.target.value.trim().toUpperCase().slice(0,2);setColourPrefs({[e.target.dataset.letterKey]:v||DEFAULT_PREFS[e.target.dataset.letterKey]});return}if(e.target.dataset?.colorKey){setColourPrefs({[e.target.dataset.colorKey]:e.target.value.toUpperCase()});return}if(e.target.closest('[data-form="entry"]'))updateEntryForm();if(e.target.dataset?.draft&&S.draft){S.draft[e.target.dataset.draft]=e.target.value;renderPatternPreview()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+document.addEventListener('submit',e=>{
+  const f=e.target.closest('form[data-form]');if(!f)return;e.preventDefault();
+  const btn=f.querySelector('[type=submit]');busy(btn,true);
+  const done=()=>busy(btn,false);
+  const fd=Object.fromEntries(new FormData(f).entries());
+  switch(f.dataset.form){
+    case'entry':{
+      const err=f.querySelector('#e-error');err.textContent='';
+      const isOT=fd.entry_type==='overtime',allDay=!isOT&&!!f.all_day.checked;
+      const rec={note_date:fd.note_date,title:(fd.title||'').trim(),content:(fd.content||'').trim(),entry_type:isOT?'overtime':'note',all_day:allDay,start_time:allDay?null:(fd.start_time||null),end_time:allDay?null:(fd.end_time||null)};
+      if(!rec.title)rec.title=isOT?'Overtime':'';
+      const problem=!isYmd(rec.note_date)?'Choose a date.':!rec.title?'Add a title.':(!allDay&&!rec.start_time)?'Add a start time.':(isOT&&!rec.end_time)?'Overtime needs an end time.':(isOT&&rec.start_time===rec.end_time)?'Start and end time cannot be the same.':null;
+      if(problem){err.textContent=problem;done();return}
+      go(async()=>{const id=f.dataset.id;
+        if(id)await S.store.updateNote(id,rec);else await S.store.addNote(rec);
+        closeModal();S.selected=rec.note_date;const mr=monthRange(S.cursor);if(rec.note_date<mr.first||rec.note_date>mr.last)S.cursor=rec.note_date;
+        await ensureData(true);render();toast(id?'Entry updated':isOT?'Overtime saved':'Note saved')}).finally(done);break}
+    case'pattern':{
+      const err=validateRot(S.draft);if(err){toast(err,true);done();return}
+      go(async()=>{const r={...S.draft,offshore_duration:Number(S.draft.offshore_duration),offday_duration:Number(S.draft.offday_duration)};
+        S.rot=normRot(await S.store.saveRotation(r));S.draft={...S.rot};S.today=todayIn(S.rot.timezone);render();toast('Rotation saved — calendar updated')}).finally(done);break}
+    case'profile':go(async()=>{S.profile={...S.profile,...await S.store.saveProfile({name:(fd.name||'').trim()})};render();toast('Profile saved')}).finally(done);break;
+    case'tz':{if(!validTz(fd.timezone)){toast('Invalid timezone',true);done();return}
+      go(async()=>{S.rot=normRot(await S.store.saveRotation({...S.rot,timezone:fd.timezone}));S.today=todayIn(S.rot.timezone);await loadUpcomingHolidays();render();toast('Timezone saved')}).finally(done);break}
+    case'prefs':{const cp={...prefs(),default_view:fd.default_view==='week'?'week':'month',show_holidays:!!f.show_holidays.checked,show_note_markers:!!f.show_note_markers.checked};
+      go(async()=>{const saved=await S.store.saveProfile({calendar_preferences:cp});S.profile={...S.profile,...saved};S.view=cp.default_view;render();toast('Preferences saved')}).finally(done);break}
+    case'export':go(async()=>{
+      const from=S.today.slice(0,8)+'01',to=lastOfMonth(addMonths(from,Number(fd.months)||12));
+      const notes=f.include_notes.checked?(await S.store.listNotes(from,to)).map(normNote):[];
+      const hols=f.include_holidays.checked?(await S.store.listHolidays(from,to)).map(h=>({...h,holiday_date:String(h.holiday_date).slice(0,10)})):[];
+      const blob=new Blob([buildICS(S.rot,from,to,notes,hols)],{type:'text/calendar;charset=utf-8'});
+      const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`offshore-schedule-${from.slice(0,7)}.ics`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);
+      toast('Calendar exported')}).finally(done);break;
+    case'auth':{
+      const email=(fd.email||'').trim(),pw=fd.password||'';
+      if(!email||pw.length<6){renderAuth('Enter your email and a password of at least 6 characters.',true);return}
+      go(async()=>{try{
+        if(S.authMode==='signup'){const d=await S.store.signUp(email,pw,(fd.name||'').trim());if(d.session){S.store.user=d.user;startApp()}else{S.authMode='signin';renderAuth('Account created. Check your email to confirm, then sign in.')}}
+        else{await S.store.signIn(email,pw);startApp()}
+      }catch(err){renderAuth(errMsg(err),true)}});break}
+  }
+});
+
+/* Swipe left/right on the calendar to change month or week */
+let tx=null,ty=null;
+document.addEventListener('touchstart',e=>{if(e.target.closest('#cal-body')){tx=e.touches[0].clientX;ty=e.touches[0].clientY}else tx=null},{passive:true});
+document.addEventListener('touchend',e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;tx=null;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5)document.querySelector(`[data-action="${dx<0?'next':'prev'}"]`)?.click()},{passive:true});
+
+/* Keep "today" correct if the app stays open past midnight */
+setInterval(()=>{if(!S.started||!S.rot)return;const t=todayIn(S.rot.timezone);if(t!==S.today){S.today=t;loadUpcomingHolidays().then(()=>{if(!document.querySelector('.modal'))render()})}},60000);
+
+/* ===================== Boot ===================== */
+(async function boot(){
+  if(!USE_SUPABASE){S.store=PreviewStore;startApp();return}
+  try{await SupabaseStore.init()}catch(e){showFatal('Could not load the Supabase client: '+errMsg(e));return}
+  S.store=SupabaseStore;
+  SupabaseStore.sb.auth.onAuthStateChange((event,session)=>{
+    if(session){SupabaseStore.user=session.user;setTimeout(startApp,0)}
+    else if(event==='SIGNED_OUT'||event==='INITIAL_SESSION'){S.started=false;renderAuth()}
+  });
+})();
+</script>
+</body>
+</html>
